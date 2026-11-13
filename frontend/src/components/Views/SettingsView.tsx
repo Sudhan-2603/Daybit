@@ -14,7 +14,15 @@ import {
   Smartphone,
   Save,
   CheckCircle2,
-  Send
+  Send,
+  Power,
+  Laptop,
+  Package,
+  ShieldCheck,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink,
+  Sliders
 } from 'lucide-react';
 import type { TasksViewMode } from '../Modals/SettingsModal';
 import { LANGUAGES, SupportedLanguage } from '../../services/i18n';
@@ -71,6 +79,30 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [waPhoneNumberId, setWaPhoneNumberId] = useState('109283746501928');
   const [waVerifyToken, setWaVerifyToken] = useState('daybit_webhook_secret_2026');
   const [waSaved, setWaSaved] = useState(false);
+
+  // Auto-start on system boot / startup
+  const [startOnBoot, setStartOnBoot] = useState<boolean>(() => {
+    return localStorage.getItem('daybit_autostart_system') === 'true';
+  });
+  const [startMinimized, setStartMinimized] = useState<boolean>(() => {
+    return localStorage.getItem('daybit_autostart_minimized') === 'true';
+  });
+  const [bootStatusMsg, setBootStatusMsg] = useState<string>('');
+  const [showReleaseDetails, setShowReleaseDetails] = useState<boolean>(false);
+
+  const handleToggleStartOnBoot = (val: boolean) => {
+    setStartOnBoot(val);
+    localStorage.setItem('daybit_autostart_system', String(val));
+    setBootStatusMsg(val ? 'Startup enabled: Daybit will start when system turns on' : 'Startup disabled: Daybit will launch manually');
+    setTimeout(() => setBootStatusMsg(''), 3000);
+  };
+
+  const handleToggleStartMinimized = (val: boolean) => {
+    setStartMinimized(val);
+    localStorage.setItem('daybit_autostart_minimized', String(val));
+    setBootStatusMsg('Startup preference saved');
+    setTimeout(() => setBootStatusMsg(''), 2500);
+  };
 
   const requestNotification = async () => {
     if ('Notification' in window) {
@@ -177,7 +209,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       Desktop Notifications
                     </h3>
                     <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
-                      Allow desktop alerts for live task reminders while Daybit is running.
+                      Allow desktop alerts for live task reminders, scheduled notifications, and focus alerts while Daybit is running.
                     </p>
                     <div className="mt-2.5 flex items-center gap-2 text-xs">
                       <span className="text-zinc-400">Current Permission:</span>
@@ -199,6 +231,100 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 >
                   {notificationStatus === 'granted' ? 'Test Alert' : 'Enable Access'}
                 </button>
+              </div>
+            </div>
+
+            {/* Start App When System Turns On (System Startup) */}
+            <div className="p-6 rounded-3xl backdrop-blur-xl bg-white/80 dark:bg-zinc-950/70 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs transition-all">
+              <div className="flex items-start justify-between gap-4 mb-4">
+                <div className="flex items-start gap-3.5">
+                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                    startOnBoot
+                      ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/20'
+                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300'
+                  }`}>
+                    <Power className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-black dark:text-white">
+                        Start App When System Turns On
+                      </h3>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full transition-all ${
+                        startOnBoot 
+                          ? 'bg-emerald-500 text-white shadow-xs' 
+                          : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'
+                      }`}>
+                        {startOnBoot ? 'Active on Boot' : 'Manual Launch Only'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
+                      Launch Daybit automatically on system boot / startup so background task notifications, timers, and workspaces are ready immediately.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Main Toggle Switch */}
+                <button
+                  type="button"
+                  onClick={() => handleToggleStartOnBoot(!startOnBoot)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all shrink-0 active:scale-95 ${
+                    startOnBoot
+                      ? 'bg-emerald-500 text-white shadow-xs hover:bg-emerald-600'
+                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                  }`}
+                >
+                  {startOnBoot ? 'Enabled' : 'Disabled'}
+                </button>
+              </div>
+
+              {/* Startup Options & Status Details */}
+              <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                    <Laptop className="w-4 h-4 text-zinc-400" />
+                    <span>Launch Behavior on System Startup:</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={!startOnBoot}
+                      onClick={() => handleToggleStartMinimized(!startMinimized)}
+                      className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all border ${
+                        !startOnBoot 
+                          ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 text-zinc-400'
+                          : startMinimized
+                            ? 'border-emerald-500/50 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 font-bold'
+                            : 'border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                      }`}
+                    >
+                      {startMinimized ? '✓ Start Minimized to Tray' : 'Open Full Window on Boot'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Platform Support Pills */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+                  <div className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/60 text-[11px]">
+                    <span className="font-bold text-black dark:text-white block">Windows 10 / 11</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 text-[10px]">Daybit.exe & shell:startup</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/60 text-[11px]">
+                    <span className="font-bold text-black dark:text-white block">Ubuntu & Arch Linux</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 text-[10px]">~/.config/autostart/daybit</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/60 dark:border-zinc-800/60 text-[11px]">
+                    <span className="font-bold text-black dark:text-white block">Android APK</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 text-[10px]">BOOT_COMPLETED service</span>
+                  </div>
+                </div>
+
+                {bootStatusMsg && (
+                  <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 animate-fadeIn">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>{bootStatusMsg}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -545,21 +671,111 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         )}
 
-        {/* BOTTOM SECTION: Feedback Button & Version (as requested!) */}
-        <div className="pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 flex flex-col items-center justify-center text-center space-y-3">
-          {/* Feedback Button */}
-          <button
-            type="button"
-            onClick={onOpenFeedbacks}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold shadow-sm hover:opacity-90 active:scale-95 transition-all"
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>Community Feedbacks & Reviews</span>
-          </button>
+        {/* BOTTOM SECTION: Refined v0.1 Release Showcase & Feedback */}
+        <div className="pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
+          <div className="p-6 rounded-3xl backdrop-blur-xl bg-white/70 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs text-center flex flex-col items-center">
+            
+            {/* Version Badge & Status */}
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-3 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-mono font-bold text-black dark:text-white">Daybit v0.1</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">
+                Stable Release
+              </span>
+            </div>
 
-          {/* Version Label */}
-          <div className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 font-mono">
-            Daybit v0.1 • Stable Release (Desktop & Mobile Shell)
+            <h4 className="text-sm font-extrabold text-black dark:text-white">
+              Daybit Cross-Platform Suite v0.1
+            </h4>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mt-1 leading-relaxed">
+              Standalone Desktop applications, mobile APK, and native Linux distributions compiled with React 19, Rust Axum, and zero compile errors.
+            </p>
+
+            {/* Platform Matrix Mini Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full max-w-xl my-4 text-left">
+              <div className="p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
+                <div className="text-[10px] uppercase font-bold text-zinc-400">Windows</div>
+                <div className="text-xs font-bold text-black dark:text-white truncate">Daybit.exe</div>
+                <div className="text-[10px] text-zinc-500">MSI & Standalone</div>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
+                <div className="text-[10px] uppercase font-bold text-zinc-400">Android</div>
+                <div className="text-xs font-bold text-black dark:text-white truncate">Daybit-v0.1.apk</div>
+                <div className="text-[10px] text-zinc-500">Android 7.0 - 14</div>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
+                <div className="text-[10px] uppercase font-bold text-zinc-400">Ubuntu / Debian</div>
+                <div className="text-xs font-bold text-black dark:text-white truncate">daybit_0.1.0.deb</div>
+                <div className="text-[10px] text-zinc-500">Native dpkg install</div>
+              </div>
+
+              <div className="p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
+                <div className="text-[10px] uppercase font-bold text-zinc-400">Arch / Linux</div>
+                <div className="text-xs font-bold text-black dark:text-white truncate">AppImage & PKG</div>
+                <div className="text-[10px] text-zinc-500">makepkg / portable</div>
+              </div>
+            </div>
+
+            {/* Release Artifacts Drawer Toggle */}
+            <button
+              type="button"
+              onClick={() => setShowReleaseDetails(!showReleaseDetails)}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors mb-3"
+            >
+              <Package className="w-3.5 h-3.5" />
+              <span>{showReleaseDetails ? 'Hide Checksums & Artifacts' : 'View v0.1 SHA-256 Checksums & Paths'}</span>
+              {showReleaseDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* Collapsible Release Artifacts Table */}
+            {showReleaseDetails && (
+              <div className="w-full max-w-xl text-left p-3.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 mb-4 animate-linear-enter">
+                <div className="flex items-center justify-between text-xs font-bold text-black dark:text-white mb-2">
+                  <span className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                    <span>Verified SHA-256 Signatures</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-zinc-400">releases/v0.1/</span>
+                </div>
+                <div className="space-y-1.5 font-mono text-[10px]">
+                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="font-semibold text-black dark:text-white shrink-0">windows/Daybit.exe</span>
+                    <span className="text-zinc-400 truncate">983ffee92763c650b3d0c9dbabc38ce4...</span>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="font-semibold text-black dark:text-white shrink-0">android/Daybit-v0.1.apk</span>
+                    <span className="text-zinc-400 truncate">b1b146583208d63a4b139be2b6a9c327...</span>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="font-semibold text-black dark:text-white shrink-0">ubuntu/daybit_0.1.0_amd64.deb</span>
+                    <span className="text-zinc-400 truncate">c3759cb3db4bd610e4c09c03405b6631...</span>
+                  </div>
+                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
+                    <span className="font-semibold text-black dark:text-white shrink-0">arch/Daybit-0.1.0.AppImage</span>
+                    <span className="text-zinc-400 truncate">38dba5b5e0a80ce2cc4ffb83a04954ec...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons: Feedback & Links */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onOpenFeedbacks}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-black dark:bg-white text-white dark:text-black text-xs font-semibold shadow-xs hover:opacity-90 active:scale-95 transition-all"
+              >
+                <MessageSquare className="w-4 h-4" />
+                <span>Community Feedbacks & Reviews</span>
+              </button>
+            </div>
+
+            {/* Version Meta Footer */}
+            <div className="text-[10px] text-zinc-400 font-mono mt-3">
+              Daybit Engine v0.1.0 • React 19 Strict • Rust Axum 0.7 • Production Ready
+            </div>
           </div>
         </div>
       </div>

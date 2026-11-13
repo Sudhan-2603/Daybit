@@ -59,7 +59,17 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             <section><h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-zinc-500">Tasks view</h3><div className="grid grid-cols-3 gap-2">
               {views.map((view) => <button key={view.id} onClick={() => onSelectTasksViewMode(view.id)} className={`flex flex-col items-center gap-2 rounded-2xl border p-3 text-xs font-semibold transition ${tasksViewMode === view.id ? 'border-black bg-zinc-100 text-black dark:border-white dark:bg-zinc-900 dark:text-white' : 'border-zinc-200 text-zinc-500 hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-900'}`}>{view.icon}{view.label}</button>)}
             </div></section>
-            <section className="border-t border-zinc-200/70 pt-5 dark:border-zinc-800"><button onClick={onOpenFeedback} className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4 text-left transition hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-zinc-900"><span className="block text-sm font-semibold text-zinc-900 dark:text-white">Feedback</span><span className="mt-1 block text-xs text-zinc-500">View or send workspace feedback</span></button><p className="mt-4 text-center text-[10px] text-zinc-400">Daybit version 0.0.0</p></section>
+            <section className="border-t border-zinc-200/70 pt-5 dark:border-zinc-800">
+              <button onClick={onOpenFeedback} className="w-full rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4 text-left transition hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900/60 dark:hover:bg-zinc-900">
+                <span className="block text-sm font-semibold text-zinc-900 dark:text-white">Feedback</span>
+                <span className="mt-1 block text-xs text-zinc-500">View or send workspace feedback</span>
+              </button>
+              <div className="mt-4 flex items-center justify-center gap-2 text-center text-[10px] text-zinc-400 font-mono">
+                <span>Daybit v0.1</span>
+                <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                <span className="px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-semibold text-[9px]">Stable Release</span>
+              </div>
+            </section>
           </div>
         ) : (
           <div className="flex-1 space-y-6 overflow-y-auto p-6 animate-linear-enter">
