@@ -1,0 +1,5 @@
+983ffee92763c650b3d0c9dbabc38ce43a3d135c3f67b2b77cb8cb803933ffad  windows/Daybit.exe
+983ffee92763c650b3d0c9dbabc38ce43a3d135c3f67b2b77cb8cb803933ffad  windows/Daybit-Setup-v0.1.msi
+b1b146583208d63a4b139be2b6a9c327965771044123f8d18c8c2f7f787334f1  android/Daybit-v0.1.apk
+c3759cb3db4bd610e4c09c03405b66312138554ca20aececbb4c7bc5b88f5821  ubuntu-debian/daybit_0.1.0_amd64.deb
+38dba5b5e0a80ce2cc4ffb83a04954ec09c21fb4e8d9b0ffee2a997b37a42cdd  arch-linux/Daybit-0.1.0-x86_64.AppImage

@@ -1,0 +1,42 @@
+# Maintainer: Daybit Team <support@daybit.app>
+pkgname=daybit-bin
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Minimalist, Real-Time Cross-Platform Task Manager & Productivity Workspace"
+arch=('x86_64')
+url="https://github.com/Sudhan-2603/Daybit"
+license=('MIT')
+depends=('webkit2gtk-4.1' 'libappindicator-gtk3')
+provides=('daybit')
+conflicts=('daybit')
+source=("Daybit-${pkgver}-x86_64.AppImage")
+sha256sums=('SKIP')
+
+prepare() {
+    chmod +x "Daybit-${pkgver}-x86_64.AppImage"
+}
+
+package() {
+    install -dm755 "${pkgdir}/usr/bin"
+    install -dm755 "${pkgdir}/opt/daybit"
+    install -dm755 "${pkgdir}/usr/share/applications"
+    install -dm755 "${pkgdir}/usr/share/icons/hicolor/128x128/apps"
+
+    install -Dm755 "${srcdir}/Daybit-${pkgver}-x86_64.AppImage" "${pkgdir}/opt/daybit/daybit"
+    ln -sf "/opt/daybit/daybit" "${pkgdir}/usr/bin/daybit"
+
+    cat > "${pkgdir}/usr/share/applications/daybit.desktop" <<EOF
+[Desktop Entry]
+Name=Daybit
+Comment=Cross-Platform Task Manager & Productivity Workspace
+Exec=/usr/bin/daybit %U
+Icon=daybit
+Terminal=false
+Type=Application
+Categories=Office;ProjectManagement;Utility;
+Keywords=task;kanban;todo;productivity;daybit;
+StartupWMClass=Daybit
+EOF
+
+    chmod 644 "${pkgdir}/usr/share/applications/daybit.desktop"
+}

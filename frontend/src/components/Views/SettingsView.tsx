@@ -559,7 +559,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           {/* Version Label */}
           <div className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500 font-mono">
-            Daybit v2.4.0 • Build 2026.11 (x64 Desktop & Mobile Shell)
+            Daybit v0.1 • Stable Release (Desktop & Mobile Shell)
           </div>
         </div>
       </div>

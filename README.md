@@ -16,12 +16,14 @@
   <img src="https://img.shields.io/badge/Rust-Axum%200.7-000000?style=for-the-badge&logo=rust&logoColor=white" alt="Rust Axum" />
   <img src="https://img.shields.io/badge/MongoDB-Atlas%20%2F%20Local-000000?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/Tauri%202-Win%20%7C%20Linux%20%7C%20Android-000000?style=for-the-badge&logo=tauri&logoColor=white" alt="Tauri 2" />
+  <a href="releases/v0.1/"><img src="https://img.shields.io/badge/Release-v0.1%20Stable-000000?style=for-the-badge&logo=github&logoColor=white" alt="v0.1 Stable" /></a>
 </p>
 
 <p>
   <a href="#-why-daybit">About</a> •
   <a href="#-feature-highlights">Features</a> •
   <a href="#%EF%B8%8F-architecture">Architecture</a> •
+  <a href="releases/v0.1/"><strong>Downloads (v0.1)</strong></a> •
   <a href="#-getting-started">Quick Start</a> •
   <a href="#-api--websocket">API</a> •
   <a href="#-multi-os-builds">Builds</a>
@@ -122,7 +124,22 @@ flowchart LR
 
 ---
 
-## 🚀 Getting Started
+## 📦 Downloads & Release Packages (v0.1 Stable)
+
+Download pre-compiled binaries and installers from the [`releases/v0.1/`](releases/v0.1/) directory:
+
+| OS / Platform | Package / Installer | Description |
+| :--- | :--- | :--- |
+| **Windows** | [`Daybit.exe`](releases/v0.1/windows/Daybit.exe) | Standalone Windows application |
+| **Windows (Installer)** | [`Daybit-Setup-v0.1.msi`](releases/v0.1/windows/Daybit-Setup-v0.1.msi) | Windows MSI Setup & Desktop installer |
+| **Android** | [`Daybit-v0.1.apk`](releases/v0.1/android/Daybit-v0.1.apk) | Android Mobile application package |
+| **Ubuntu / Debian** | [`daybit_0.1.0_amd64.deb`](releases/v0.1/ubuntu-debian/daybit_0.1.0_amd64.deb) | Ubuntu / Debian (.deb) package |
+| **Arch Linux / Generic** | [`Daybit-0.1.0-x86_64.AppImage`](releases/v0.1/arch-linux/Daybit-0.1.0-x86_64.AppImage) | Portable Linux AppImage |
+| **Arch Linux (AUR)** | [`PKGBUILD`](releases/v0.1/arch-linux/PKGBUILD) | Arch Linux makepkg recipe |
+
+*Checksums are verified via [`releases/v0.1/SHA256SUMS.txt`](releases/v0.1/SHA256SUMS.txt).*
+
+---
 
 ### Prerequisites
 - **Rust & Cargo** (stable)
