@@ -50,3 +50,5 @@ skills-lock.json
 find_pe_dlls.ps1
 Project.txt
 
+
+!releases/**/*.exe
