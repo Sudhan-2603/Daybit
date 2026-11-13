@@ -147,6 +147,8 @@ export function App() {
         const storedUser = api.getUser();
         if (storedUser) {
           currentUser = storedUser;
+        } else if (!navigator.onLine || localStorage.getItem('daybit_is_offline') === 'true') {
+          currentUser = api.enableOfflineMode();
         } else {
           api.logout();
           setUser(null);
