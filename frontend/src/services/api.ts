@@ -10,7 +10,7 @@ import type {
   User,
 } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:4000';
 
 class ApiService {
   private accessToken: string | null = null;

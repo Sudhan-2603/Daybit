@@ -718,48 +718,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </div>
             </div>
 
-            {/* Release Artifacts Drawer Toggle */}
-            <button
-              type="button"
-              onClick={() => setShowReleaseDetails(!showReleaseDetails)}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white transition-colors mb-3"
-            >
-              <Package className="w-3.5 h-3.5" />
-              <span>{showReleaseDetails ? 'Hide Checksums & Artifacts' : 'View v0.1 SHA-256 Checksums & Paths'}</span>
-              {showReleaseDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-            </button>
-
-            {/* Collapsible Release Artifacts Table */}
-            {showReleaseDetails && (
-              <div className="w-full max-w-xl text-left p-3.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 mb-4 animate-linear-enter">
-                <div className="flex items-center justify-between text-xs font-bold text-black dark:text-white mb-2">
-                  <span className="flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                    <span>Verified SHA-256 Signatures</span>
-                  </span>
-                  <span className="text-[10px] font-mono text-zinc-400">releases/v0.1/</span>
-                </div>
-                <div className="space-y-1.5 font-mono text-[10px]">
-                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
-                    <span className="font-semibold text-black dark:text-white shrink-0">windows/Daybit.exe</span>
-                    <span className="text-zinc-400 truncate">983ffee92763c650b3d0c9dbabc38ce4...</span>
-                  </div>
-                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
-                    <span className="font-semibold text-black dark:text-white shrink-0">android/Daybit-v0.1.apk</span>
-                    <span className="text-zinc-400 truncate">b1b146583208d63a4b139be2b6a9c327...</span>
-                  </div>
-                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
-                    <span className="font-semibold text-black dark:text-white shrink-0">ubuntu/daybit_0.1.0_amd64.deb</span>
-                    <span className="text-zinc-400 truncate">c3759cb3db4bd610e4c09c03405b6631...</span>
-                  </div>
-                  <div className="p-1.5 rounded-lg bg-white/70 dark:bg-zinc-950/60 flex items-center justify-between gap-2 overflow-hidden">
-                    <span className="font-semibold text-black dark:text-white shrink-0">arch/Daybit-0.1.0.AppImage</span>
-                    <span className="text-zinc-400 truncate">38dba5b5e0a80ce2cc4ffb83a04954ec...</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Action Buttons: Feedback & Links */}
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <button

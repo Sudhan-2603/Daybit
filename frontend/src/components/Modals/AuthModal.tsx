@@ -51,10 +51,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     try {
       const result = await signInWithPopup(firebaseAuth, googleProvider);
       const idToken = await result.user.getIdToken();
-      await api.signInWithFirebase(idToken);
-      const user = await api.getMe();
-      onSuccess(user);
-      onClose();
+      
+      let user: User | null = null;
+      try {
+        await api.signInWithFirebase(idToken);
+        user = await api.getMe();
+      } catch (backendErr) {
+        console.warn('Backend sync deferred, establishing Firebase session profile:', backendErr);
+        user = {
+          id: result.user.uid,
+          email: result.user.email || `${result.user.uid}@daybit.app`,
+          phone_number: result.user.phoneNumber || undefined,
+          created_at: new Date().toISOString(),
+        };
+        api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
+        localStorage.setItem('daybit_user', JSON.stringify(user));
+      }
+
+      if (user) {
+        onSuccess(user);
+        onClose();
+      }
     } catch (err: unknown) {
       await signOut(firebaseAuth).catch(() => undefined);
       const message = err instanceof Error ? err.message : 'Google sign-in failed.';

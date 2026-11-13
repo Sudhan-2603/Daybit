@@ -137,8 +137,6 @@ Download pre-compiled binaries and installers from the [`releases/v0.1/`](releas
 | **Arch Linux / Generic** | [`Daybit-0.1.0-x86_64.AppImage`](releases/v0.1/arch-linux/Daybit-0.1.0-x86_64.AppImage) | Portable Linux AppImage |
 | **Arch Linux (AUR)** | [`PKGBUILD`](releases/v0.1/arch-linux/PKGBUILD) | Arch Linux makepkg recipe |
 
-*Checksums are verified via [`releases/v0.1/SHA256SUMS.txt`](releases/v0.1/SHA256SUMS.txt).*
-
 ---
 
 ### Prerequisites

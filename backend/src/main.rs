@@ -74,7 +74,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .allow_methods(Any)
         .allow_headers(Any);
 
-    let app = Router::new()
+    let routes = Router::new()
         // Auth
         .route("/auth/register", post(register))
         .route("/auth/login", post(login))
@@ -90,10 +90,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/devices", post(register_device))
         // Dashboard
         .route("/dashboard", get(get_dashboard_stats))
-        // Realtime sync
-        .route("/ws", get(ws_handler))
         // WhatsApp webhook
         .route("/whatsapp/webhook", get(verify_webhook).post(handle_webhook))
+        .route("/health", get(|| async { "OK" }));
+
+    let app = Router::new()
+        .merge(routes.clone())
+        .nest("/api", routes)
+        // Realtime sync
+        .route("/ws", get(ws_handler))
+        .route("/api/ws", get(ws_handler))
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state);

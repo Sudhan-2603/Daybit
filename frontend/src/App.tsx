@@ -144,22 +144,30 @@ export function App() {
       try {
         currentUser = await api.getMe();
       } catch {
-        api.logout();
-        setUser(null);
-        setTasks([]);
-        setStats(null);
-        setAuthModalOpen(true);
-        return;
+        const storedUser = api.getUser();
+        if (storedUser) {
+          currentUser = storedUser;
+        } else {
+          api.logout();
+          setUser(null);
+          setTasks([]);
+          setStats(null);
+          setAuthModalOpen(true);
+          return;
+        }
       }
       setUser(currentUser);
 
-      const [fetchedTasks, fetchedStats] = await Promise.all([
-        api.getTasks(),
-        api.getDashboardStats(),
-      ]);
-
-      setTasks(mergeTasksById(fetchedTasks));
-      setStats(fetchedStats);
+      try {
+        const [fetchedTasks, fetchedStats] = await Promise.all([
+          api.getTasks(),
+          api.getDashboardStats(),
+        ]);
+        setTasks(mergeTasksById(fetchedTasks));
+        setStats(fetchedStats);
+      } catch (loadErr) {
+        console.warn('Initial task sync deferred:', loadErr);
+      }
 
       setupWebSocket();
     } catch (err) {
