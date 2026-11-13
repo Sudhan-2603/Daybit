@@ -7,8 +7,10 @@ import {
   User as UserIcon,
   Settings as SettingsIcon,
   ChevronDown
+  ,Search, SlidersHorizontal, Check
 } from 'lucide-react';
 import type { User } from '../types';
+import type { Place, Task } from '../types';
 import daybitLogo from '../assets/daybit-logo.png';
 
 interface NavbarProps {
@@ -21,6 +23,12 @@ interface NavbarProps {
   darkMode: boolean;
   onToggleDarkMode: () => void;
   wsConnected: boolean;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  selectedPlace?: Place | 'All';
+  onPlaceChange?: (place: Place | 'All') => void;
+  searchResults?: Task[];
+  onSelectSearchResult?: (task: Task) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -33,8 +41,16 @@ export const Navbar: React.FC<NavbarProps> = ({
   darkMode,
   onToggleDarkMode,
   wsConnected,
+  searchQuery = '',
+  onSearchChange = () => {},
+  selectedPlace = 'All',
+  onPlaceChange = () => {},
+  searchResults = [],
+  onSelectSearchResult = () => {},
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const places: (Place | 'All')[] = ['All', 'College', 'Work', 'Personal'];
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/75 dark:bg-black/75 border-b border-zinc-200/60 dark:border-zinc-800/60 transition-colors duration-200">
@@ -46,6 +62,101 @@ export const Navbar: React.FC<NavbarProps> = ({
             <h1 className="text-base sm:text-lg font-bold tracking-tight text-black dark:text-white leading-tight font-sans">
               Daybit
             </h1>
+          </div>
+        </div>
+
+        {/* Small Sized Search Bar & Filter */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Small Search Bar */}
+          <div className="relative flex items-center gap-1.5 rounded-full border border-zinc-200/90 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 px-2.5 py-1 text-xs">
+            <Search className="w-3 h-3 text-zinc-400 shrink-0" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search..."
+              className="w-20 sm:w-28 focus:w-40 transition-all bg-transparent text-xs outline-none text-black dark:text-white placeholder:text-zinc-400"
+            />
+            {searchQuery.trim().length > 0 && searchResults.length > 0 && (
+              <div className="absolute left-0 top-full mt-2 z-50 w-64 max-w-[85vw] rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 p-1.5 shadow-2xl backdrop-blur-2xl animate-linear-enter">
+                <div className="px-2.5 py-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider border-b border-zinc-100 dark:border-zinc-800/80 mb-1">
+                  Matching Tasks ({searchResults.length})
+                </div>
+                <div className="max-h-52 overflow-y-auto no-scrollbar space-y-0.5">
+                  {searchResults.slice(0, 6).map((task) => (
+                    <button
+                      key={task.id}
+                      type="button"
+                      onClick={() => onSelectSearchResult(task)}
+                      className="block w-full rounded-xl px-2.5 py-1.5 text-left hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                    >
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="truncate text-xs font-bold text-black dark:text-white">
+                          {task.name}
+                        </span>
+                        <span className="shrink-0 text-[9px] font-semibold px-1.5 py-0.2 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                          {task.place}
+                        </span>
+                      </div>
+                      {task.description && (
+                        <span className="block truncate text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                          {task.description}
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {searchQuery.trim().length > 0 && searchResults.length === 0 && (
+              <div className="absolute left-0 top-full mt-2 z-50 w-48 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 px-3 py-1.5 text-xs text-zinc-500 shadow-xl backdrop-blur-2xl animate-linear-enter">
+                No matching tasks
+              </div>
+            )}
+          </div>
+
+          {/* Small Place Filter */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setFilterOpen(!filterOpen)}
+              className={`flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-all ${
+                selectedPlace !== 'All'
+                  ? 'border-black dark:border-white bg-black dark:bg-white text-white dark:text-black font-semibold shadow-xs'
+                  : 'border-zinc-200/90 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200/80 dark:hover:bg-zinc-800'
+              }`}
+            >
+              <SlidersHorizontal className="w-3 h-3" />
+              <span>{selectedPlace === 'All' ? 'Filter' : selectedPlace}</span>
+            </button>
+
+            {filterOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-40"
+                  onClick={() => setFilterOpen(false)}
+                />
+                <div className="absolute right-0 top-full mt-2 z-50 w-36 rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 p-1 shadow-2xl backdrop-blur-2xl animate-linear-enter">
+                  <div className="px-2.5 py-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider border-b border-zinc-100 dark:border-zinc-800/80 mb-0.5">
+                    Filter by Place
+                  </div>
+                  {places.map((place) => (
+                    <button
+                      key={place}
+                      type="button"
+                      onClick={() => {
+                        onPlaceChange(place);
+                        setFilterOpen(false);
+                      }}
+                      className="flex w-full items-center justify-between rounded-xl px-2.5 py-1.5 text-left text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                    >
+                      <span>{place}</span>
+                      {selectedPlace === place && <Check className="h-3 w-3 stroke-[2.5]" />}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
 

@@ -380,7 +380,7 @@ export function App() {
           : lightBg === 'light-mist' ? 'linear-gradient(135deg, #ffffff, #f4f4f5, #e4e4e7)' : undefined].filter(Boolean).join(', ') || undefined,
       }}
     >
-      {/* Frosted Glass Header */}
+      {/* Frosted Glass Header with Compact Search & Filter */}
       <Navbar
         user={user}
         onOpenNewTask={() => {
@@ -396,12 +396,6 @@ export function App() {
         wsConnected={wsConnected}
         onOpenProfile={() => changeTabWithTransition('profile')}
         onOpenSettings={() => changeTabWithTransition('settings')}
-      />
-
-      {/* Frosted Glass Floating Capsule Bar */}
-      <TabBar
-        activeTab={activeTab}
-        onChangeTab={changeTabWithTransition}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         selectedPlace={selectedPlace}
@@ -412,6 +406,12 @@ export function App() {
           setTaskModalOpen(true);
           setSearchQuery('');
         }}
+      />
+
+      {/* Frosted Glass Floating Capsule Bar (Clean & Focused on Navigation/Tools) */}
+      <TabBar
+        activeTab={activeTab}
+        onChangeTab={changeTabWithTransition}
         onOpenCalculator={() => setCalcModalOpen(true)}
         onOpenTimer={() => setTimerModalOpen(true)}
         onOpenWhatsApp={() => setWhatsAppModalOpen(true)}

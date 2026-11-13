@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, Lock, Mail, UserPlus, LogIn, Sparkles } from 'lucide-react';
 import { api } from '../../services/api';
+import { firebaseAuth, googleProvider } from '../../services/firebase';
+import { signInWithPopup, signOut } from 'firebase/auth';
 import type { User } from '../../types';
 
 interface AuthModalProps {
@@ -15,6 +17,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -42,6 +45,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    setOauthLoading(true);
+    try {
+      const result = await signInWithPopup(firebaseAuth, googleProvider);
+      const idToken = await result.user.getIdToken();
+      await api.signInWithFirebase(idToken);
+      const user = await api.getMe();
+      onSuccess(user);
+      onClose();
+    } catch (err: unknown) {
+      await signOut(firebaseAuth).catch(() => undefined);
+      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+      setError(message);
+    } finally {
+      setOauthLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-linear-enter">
       <div 
@@ -66,7 +88,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           >
             <X className="w-4 h-4" />
           </button>
-        </div>`r`n<form onSubmit={handleSubmit} className="p-6 space-y-4">
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
             <div className="p-3 text-xs rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900">
               {error}
@@ -123,6 +146,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               <>
                 <LogIn className="w-4 h-4" />
                 <span>Sign In</span>
+              </>
+            )}
+          </button>
+
+          <div className="relative flex items-center py-1">
+            <div className="flex-1 border-t border-zinc-200 dark:border-zinc-800" />
+            <span className="px-3 text-[10px] text-zinc-400">OR</span>
+            <div className="flex-1 border-t border-zinc-200 dark:border-zinc-800" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading || oauthLoading}
+            className="w-full py-2.5 rounded-full border border-zinc-200 dark:border-zinc-700 text-black dark:text-white font-semibold text-xs sm:text-sm hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+          >
+            {oauthLoading ? (
+              <span className="w-4 h-4 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <span className="font-bold text-sm">G</span>
+                <span>Continue with Google</span>
               </>
             )}
           </button>

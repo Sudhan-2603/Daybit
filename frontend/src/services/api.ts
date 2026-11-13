@@ -149,6 +149,15 @@ class ApiService {
     return data;
   }
 
+  async signInWithFirebase(idToken: string): Promise<TokenPair> {
+    const data = await this.request<TokenPair>('/auth/firebase', {
+      method: 'POST',
+      body: JSON.stringify({ id_token: idToken }),
+    });
+    this.setTokens(data);
+    return data;
+  }
+
   async getMe(): Promise<User> {
     return this.request<User>('/auth/me');
   }

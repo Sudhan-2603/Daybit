@@ -8,6 +8,7 @@ pub struct Config {
     pub whatsapp_access_token: Option<String>,
     pub whatsapp_phone_number_id: Option<String>,
     pub whatsapp_verify_token: Option<String>,
+    pub firebase_api_key: String,
 }
 
 impl Config {
@@ -25,6 +26,8 @@ impl Config {
         let whatsapp_access_token = env::var("WHATSAPP_ACCESS_TOKEN").ok();
         let whatsapp_phone_number_id = env::var("WHATSAPP_PHONE_NUMBER_ID").ok();
         let whatsapp_verify_token = env::var("WHATSAPP_VERIFY_TOKEN").ok();
+        let firebase_api_key = env::var("FIREBASE_API_KEY")
+            .unwrap_or_else(|_| "AIzaSyAyrC1S8pwDBHDDN8xQlttqVRv4T-eWnU4".to_string());
 
         Self {
             database_url,
@@ -33,6 +36,7 @@ impl Config {
             whatsapp_access_token,
             whatsapp_phone_number_id,
             whatsapp_verify_token,
+            firebase_api_key,
         }
     }
 }

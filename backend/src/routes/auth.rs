@@ -1,5 +1,6 @@
 use axum::{extract::State, Json};
 use chrono::Utc;
+use serde::Deserialize;
 use uuid::Uuid;
 
 use crate::{
@@ -8,6 +9,90 @@ use crate::{
     models::{LoginDto, RefreshDto, RegisterDto, TokenPair, User, UserResponse},
     AppState,
 };
+
+#[derive(Deserialize)]
+pub struct FirebaseLoginDto {
+    pub id_token: String,
+}
+
+#[derive(Deserialize)]
+struct FirebaseLookupResponse {
+    users: Option<Vec<FirebaseLookupUser>>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct FirebaseLookupUser {
+    local_id: String,
+    email: Option<String>,
+    #[serde(default)]
+    email_verified: bool,
+    phone_number: Option<String>,
+}
+
+pub async fn firebase_login(
+    State(state): State<AppState>,
+    Json(payload): Json<FirebaseLoginDto>,
+) -> Result<Json<TokenPair>, AppError> {
+    if payload.id_token.trim().is_empty() {
+        return Err(AppError::Unauthorized("Firebase ID token is required".to_string()));
+    }
+
+    // Identity Toolkit verifies the ID token against this Firebase project before
+    // the backend issues its own API tokens.
+    let response = reqwest::Client::new()
+        .post(format!(
+            "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key={}",
+            state.config.firebase_api_key
+        ))
+        .json(&serde_json::json!({ "idToken": payload.id_token }))
+        .send()
+        .await
+        .map_err(|e| AppError::Internal(format!("Firebase token verification failed: {e}")))?;
+
+    if !response.status().is_success() {
+        return Err(AppError::Unauthorized("Invalid Firebase ID token".to_string()));
+    }
+
+    let verified: FirebaseLookupResponse = response
+        .json()
+        .await
+        .map_err(|e| AppError::Internal(format!("Invalid Firebase verification response: {e}")))?;
+    let identity = verified.users
+        .and_then(|users| users.into_iter().next())
+        .ok_or_else(|| AppError::Unauthorized("Firebase account was not found".to_string()))?;
+    if !identity.email_verified {
+        return Err(AppError::Unauthorized("Verify your Google email before signing in".to_string()));
+    }
+    let email = identity.email
+        .filter(|value| !value.trim().is_empty())
+        .ok_or_else(|| AppError::Unauthorized("Google account must provide an email address".to_string()))?
+        .trim()
+        .to_lowercase();
+
+    let user = match state.db.find_user_by_email(&email).await {
+        Some(user) => user,
+        None => {
+            let user = User {
+                id: identity.local_id,
+                email: email.clone(),
+                password_hash: hash_password(&Uuid::new_v4().to_string())?,
+                phone_number: identity.phone_number,
+                created_at: Utc::now().to_rfc3339(),
+            };
+            state.db.insert_user(user.clone()).await?;
+            user
+        }
+    };
+
+    let access_token = generate_token(&user.id, &state.config.jwt_secret, false)?;
+    let refresh_token = generate_token(&user.id, &state.config.jwt_secret, true)?;
+    Ok(Json(TokenPair {
+        access_token,
+        refresh_token,
+        user: user.into(),
+    }))
+}
 
 pub async fn register(
     State(state): State<AppState>,

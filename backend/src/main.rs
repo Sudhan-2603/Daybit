@@ -21,7 +21,7 @@ use crate::{
     db::Db,
     models::SyncEvent,
     routes::{
-        auth::{login, me, refresh, register},
+        auth::{firebase_login, login, me, refresh, register},
         dashboard::get_dashboard_stats,
         tasks::{
             create_task, delete_task, invite_user, list_invites, list_tasks, register_device,
@@ -78,6 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Auth
         .route("/auth/register", post(register))
         .route("/auth/login", post(login))
+        .route("/auth/firebase", post(firebase_login))
         .route("/auth/refresh", post(refresh))
         .route("/auth/me", get(me))
         // Tasks
