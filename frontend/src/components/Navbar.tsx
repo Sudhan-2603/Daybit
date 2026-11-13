@@ -65,9 +65,30 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Small Sized Search Bar & Filter */}
+        {/* Right Action Capsules */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Small Search Bar */}
+          {/* Live Sync Capsule */}
+          <div 
+            title={wsConnected ? 'Real-time WebSocket Live' : 'Connecting to Live Sync...'}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 font-medium"
+          >
+            {wsConnected ? (
+              <>
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="hidden xs:inline text-[11px]">Synced</span>
+              </>
+            ) : (
+              <>
+                <span className="h-2 w-2 rounded-full bg-amber-400"></span>
+                <span className="hidden xs:inline text-[11px] text-zinc-400">Offline</span>
+              </>
+            )}
+          </div>
+
+          {/* Small Sized Search Bar (Placed before theme button) */}
           <div className="relative flex items-center gap-1.5 rounded-full border border-zinc-200/90 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 px-2.5 py-1 text-xs">
             <Search className="w-3 h-3 text-zinc-400 shrink-0" />
             <input
@@ -78,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="w-20 sm:w-28 focus:w-40 transition-all bg-transparent text-xs outline-none text-black dark:text-white placeholder:text-zinc-400"
             />
             {searchQuery.trim().length > 0 && searchResults.length > 0 && (
-              <div className="absolute left-0 top-full mt-2 z-50 w-64 max-w-[85vw] rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 p-1.5 shadow-2xl backdrop-blur-2xl animate-linear-enter">
+              <div className="absolute right-0 sm:left-0 top-full mt-2 z-50 w-64 max-w-[85vw] rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 p-1.5 shadow-2xl backdrop-blur-2xl animate-linear-enter">
                 <div className="px-2.5 py-1 text-[10px] font-bold text-zinc-400 uppercase tracking-wider border-b border-zinc-100 dark:border-zinc-800/80 mb-1">
                   Matching Tasks ({searchResults.length})
                 </div>
@@ -109,13 +130,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             )}
             {searchQuery.trim().length > 0 && searchResults.length === 0 && (
-              <div className="absolute left-0 top-full mt-2 z-50 w-48 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 px-3 py-1.5 text-xs text-zinc-500 shadow-xl backdrop-blur-2xl animate-linear-enter">
+              <div className="absolute right-0 sm:left-0 top-full mt-2 z-50 w-48 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white/95 dark:bg-black/95 px-3 py-1.5 text-xs text-zinc-500 shadow-xl backdrop-blur-2xl animate-linear-enter">
                 No matching tasks
               </div>
             )}
           </div>
 
-          {/* Small Place Filter */}
+          {/* Small Sized Place Filter (Placed before theme button) */}
           <div className="relative">
             <button
               type="button"
@@ -155,30 +176,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </button>
                   ))}
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Right Action Capsules */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          {/* Live Sync Capsule */}
-          <div 
-            title={wsConnected ? 'Real-time WebSocket Live' : 'Connecting to Live Sync...'}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 font-medium"
-          >
-            {wsConnected ? (
-              <>
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span className="hidden xs:inline text-[11px]">Synced</span>
-              </>
-            ) : (
-              <>
-                <span className="h-2 w-2 rounded-full bg-amber-400"></span>
-                <span className="hidden xs:inline text-[11px] text-zinc-400">Offline</span>
               </>
             )}
           </div>
