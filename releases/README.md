@@ -10,14 +10,14 @@
 
 ## 📦 Release Packages & Download Matrix
 
-| Platform | Target OS | File Name | Type | Size |
-| :--- | :--- | :--- | :--- | :--- |
-| **Windows** | Windows 10 / 11 (x64) | [`windows/Daybit.exe`](windows/Daybit.exe) | Standalone Application | ~5.0 MB |
-| **Windows** | Windows 10 / 11 (x64) | [`windows/Daybit-Setup-v0.1.msi`](windows/Daybit-Setup-v0.1.msi) | Windows Installer | ~5.0 MB |
-| **Android** | Android 7.0+ (API 24–34) | [`android/Daybit-v0.1.apk`](android/Daybit-v0.1.apk) | Mobile APK | ~1.2 MB |
-| **Ubuntu / Debian** | Ubuntu 20.04+, Debian 11+ | [`ubuntu-debian/daybit_0.1.0_amd64.deb`](ubuntu-debian/daybit_0.1.0_amd64.deb) | Debian Package | ~1.2 MB |
-| **Arch Linux / Generic** | Arch Linux, Manjaro, Fedora | [`arch-linux/Daybit-0.1.0-x86_64.AppImage`](arch-linux/Daybit-0.1.0-x86_64.AppImage) | Universal AppImage | ~1.2 MB |
-| **Arch Linux (AUR)** | Arch Linux (makepkg) | [`arch-linux/PKGBUILD`](arch-linux/PKGBUILD) | AUR Build Recipe | Source |
+| Platform | Target OS | File Name | Type | Size | Direct GitHub Asset |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Windows** | Windows 10 / 11 (x64) | [`windows/Daybit-v0.1.exe`](windows/Daybit-v0.1.exe) | Standalone App | ~5.0 MB | [Download Daybit-v0.1.exe](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-v0.1.exe) |
+| **Windows** | Windows 10 / 11 (x64) | [`windows/Daybit-Setup-v0.1.msi`](windows/Daybit-Setup-v0.1.msi) | Windows MSI Setup | ~5.0 MB | [Download Daybit-Setup-v0.1.msi](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-Setup-v0.1.msi) |
+| **Android** | Android 7.0+ (API 24–34) | [`android/Daybit-v0.1.apk`](android/Daybit-v0.1.apk) | Mobile APK | ~1.2 MB | [Download Daybit-v0.1.apk](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-v0.1.apk) |
+| **Ubuntu / Debian** | Ubuntu 20.04+, Debian 11+ | [`ubuntu-debian/daybit-v0.1-amd64.deb`](ubuntu-debian/daybit-v0.1-amd64.deb) | Debian Package | ~1.2 MB | [Download daybit-v0.1-amd64.deb](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/daybit-v0.1-amd64.deb) |
+| **Arch Linux / Generic** | Arch Linux, Manjaro, Fedora | [`arch-linux/Daybit-v0.1-x86_64.AppImage`](arch-linux/Daybit-v0.1-x86_64.AppImage) | Universal AppImage | ~1.2 MB | [Download Daybit-v0.1-x86_64.AppImage](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-v0.1-x86_64.AppImage) |
+| **Arch Linux (AUR)** | Arch Linux (makepkg) | [`arch-linux/PKGBUILD`](arch-linux/PKGBUILD) | AUR Build Recipe | Source | [View PKGBUILD](arch-linux/PKGBUILD) |
 
 ---
 

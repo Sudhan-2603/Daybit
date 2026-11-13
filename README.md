@@ -126,16 +126,16 @@ flowchart LR
 
 ## 📦 Downloads & Release Packages (v0.1 Stable)
 
-Download pre-compiled binaries and installers from the [`releases/v0.1/`](releases/v0.1/) directory:
+Download pre-compiled binaries and installers from [GitHub Releases v0.1](https://github.com/Sudhan-2603/Daybit/releases/tag/v0.1) or the local [`releases/v0.1/`](releases/v0.1/) directory:
 
-| OS / Platform | Package / Installer | Description |
-| :--- | :--- | :--- |
-| **Windows** | [`Daybit.exe`](releases/v0.1/windows/Daybit.exe) | Standalone Windows application |
-| **Windows (Installer)** | [`Daybit-Setup-v0.1.msi`](releases/v0.1/windows/Daybit-Setup-v0.1.msi) | Windows MSI Setup & Desktop installer |
-| **Android** | [`Daybit-v0.1.apk`](releases/v0.1/android/Daybit-v0.1.apk) | Android Mobile application package |
-| **Ubuntu / Debian** | [`daybit_0.1.0_amd64.deb`](releases/v0.1/ubuntu-debian/daybit_0.1.0_amd64.deb) | Ubuntu / Debian (.deb) package |
-| **Arch Linux / Generic** | [`Daybit-0.1.0-x86_64.AppImage`](releases/v0.1/arch-linux/Daybit-0.1.0-x86_64.AppImage) | Portable Linux AppImage |
-| **Arch Linux (AUR)** | [`PKGBUILD`](releases/v0.1/arch-linux/PKGBUILD) | Arch Linux makepkg recipe |
+| OS / Platform | Package / Installer | Description | Direct GitHub Download |
+| :--- | :--- | :--- | :--- |
+| **Windows** | [`Daybit-v0.1.exe`](releases/v0.1/windows/Daybit-v0.1.exe) | Standalone Windows application | [Download Daybit-v0.1.exe](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-v0.1.exe) |
+| **Windows (Installer)** | [`Daybit-Setup-v0.1.msi`](releases/v0.1/windows/Daybit-Setup-v0.1.msi) | Windows MSI Setup & Desktop installer | [Download Daybit-Setup-v0.1.msi](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-Setup-v0.1.msi) |
+| **Android** | [`Daybit-v0.1.apk`](releases/v0.1/android/Daybit-v0.1.apk) | Android Mobile application package | [Download Daybit-v0.1.apk](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-v0.1.apk) |
+| **Ubuntu / Debian** | [`daybit-v0.1-amd64.deb`](releases/v0.1/ubuntu-debian/daybit-v0.1-amd64.deb) | Ubuntu / Debian (.deb) package | [Download daybit-v0.1-amd64.deb](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/daybit-v0.1-amd64.deb) |
+| **Arch Linux / Generic** | [`Daybit-v0.1-x86_64.AppImage`](releases/v0.1/arch-linux/Daybit-v0.1-x86_64.AppImage) | Portable Linux AppImage | [Download Daybit-v0.1-x86_64.AppImage](https://github.com/Sudhan-2603/Daybit/releases/download/v0.1/Daybit-v0.1-x86_64.AppImage) |
+| **Arch Linux (AUR)** | [`PKGBUILD`](releases/v0.1/arch-linux/PKGBUILD) | Arch Linux makepkg recipe | [View PKGBUILD](releases/v0.1/arch-linux/PKGBUILD) |
 
 ---
 
