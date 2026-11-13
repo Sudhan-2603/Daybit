@@ -67,27 +67,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Action Capsules */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Live Sync Capsule */}
-          <div 
-            title={wsConnected ? 'Real-time WebSocket Live' : 'Connecting to Live Sync...'}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 font-medium"
-          >
-            {wsConnected ? (
-              <>
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                </span>
-                <span className="hidden xs:inline text-[11px]">Synced</span>
-              </>
-            ) : (
-              <>
-                <span className="h-2 w-2 rounded-full bg-amber-400"></span>
-                <span className="hidden xs:inline text-[11px] text-zinc-400">Offline</span>
-              </>
-            )}
-          </div>
-
           {/* Small Sized Search Bar (Placed before theme button) */}
           <div className="relative flex items-center gap-1.5 rounded-full border border-zinc-200/90 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 px-2.5 py-1 text-xs">
             <Search className="w-3 h-3 text-zinc-400 shrink-0" />
