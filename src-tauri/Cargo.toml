@@ -1,6 +1,6 @@
 [package]
 name = "daybit-desktop"
-version = "0.1.0"
+version = "0.2.0"
 description = "Daybit Cross-Platform Task Manager Shell"
 authors = ["Daybit Team"]
 edition = "2021"

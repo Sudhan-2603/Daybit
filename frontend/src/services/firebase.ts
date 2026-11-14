@@ -18,8 +18,11 @@ export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 // Analytics can be unavailable in Tauri webviews, privacy restricted browsers, or SSR.
+const isDesktopApp = typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
 export const analyticsReady = typeof window === 'undefined'
   ? Promise.resolve(null)
-  : isSupported()
-      .then((supported) => supported ? getAnalytics(firebaseApp) : null)
-      .catch(() => null);
+  : isDesktopApp
+      ? Promise.resolve(null)
+      : isSupported()
+          .then((supported) => supported ? getAnalytics(firebaseApp) : null)
+          .catch(() => null);

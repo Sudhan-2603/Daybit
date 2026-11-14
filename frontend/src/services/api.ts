@@ -10,7 +10,7 @@ import type {
   User,
 } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:4000';
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : '');
 
 const DEFAULT_STARTER_TASKS: Task[] = [
   {
@@ -63,6 +63,14 @@ class ApiService {
     this.refreshToken = localStorage.getItem('daybit_refresh_token');
   }
 
+  public isDesktopApp(): boolean {
+    return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+  }
+
+  public hasRemoteBackend(): boolean {
+    return import.meta.env.DEV || Boolean(import.meta.env.VITE_API_URL);
+  }
+
   public getOfflineTasks(): Task[] {
     const raw = localStorage.getItem('daybit_offline_tasks');
     if (!raw) {
@@ -81,7 +89,7 @@ class ApiService {
   }
 
   public isOfflineSession(): boolean {
-    return localStorage.getItem('daybit_is_offline') === 'true' || !navigator.onLine;
+    return this.isDesktopApp() || !this.hasRemoteBackend() || localStorage.getItem('daybit_is_offline') === 'true' || !navigator.onLine;
   }
 
   public enableOfflineMode(): User {
@@ -148,6 +156,10 @@ class ApiService {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    if (this.isDesktopApp() || !this.hasRemoteBackend()) {
+      throw new Error('This Daybit build uses local storage and has no backend configured.');
+    }
+
     const headers = new Headers(options.headers || {});
     headers.set('Content-Type', 'application/json');
 

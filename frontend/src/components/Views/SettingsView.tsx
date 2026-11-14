@@ -671,21 +671,21 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
         )}
 
-        {/* BOTTOM SECTION: Refined v0.1 Release Showcase & Feedback */}
+        {/* BOTTOM SECTION: Refined v0.2 Release Showcase & Feedback */}
         <div className="pt-6 border-t border-zinc-200/80 dark:border-zinc-800/80 space-y-4">
           <div className="p-6 rounded-3xl backdrop-blur-xl bg-white/70 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs text-center flex flex-col items-center">
             
             {/* Version Badge & Status */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 mb-3 shadow-xs">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-mono font-bold text-black dark:text-white">Daybit v0.1</span>
+              <span className="text-xs font-mono font-bold text-black dark:text-white">Daybit v0.2</span>
               <span className="text-[10px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full">
                 Stable Release
               </span>
             </div>
 
             <h4 className="text-sm font-extrabold text-black dark:text-white">
-              Daybit Cross-Platform Suite v0.1
+              Daybit Cross-Platform Suite v0.2
             </h4>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mt-1 leading-relaxed">
               Standalone Desktop applications, mobile APK, and native Linux distributions compiled with React 19, Rust Axum, and zero compile errors.
@@ -701,13 +701,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
               <div className="p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
                 <div className="text-[10px] uppercase font-bold text-zinc-400">Android</div>
-                <div className="text-xs font-bold text-black dark:text-white truncate">Daybit-v0.1.apk</div>
+                <div className="text-xs font-bold text-black dark:text-white truncate">Daybit-v0.2.apk</div>
                 <div className="text-[10px] text-zinc-500">Android 7.0 - 14</div>
               </div>
 
               <div className="p-2.5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-200/60 dark:border-zinc-800/60">
                 <div className="text-[10px] uppercase font-bold text-zinc-400">Ubuntu / Debian</div>
-                <div className="text-xs font-bold text-black dark:text-white truncate">daybit_0.1.0.deb</div>
+                <div className="text-xs font-bold text-black dark:text-white truncate">daybit_0.2.0.deb</div>
                 <div className="text-[10px] text-zinc-500">Native dpkg install</div>
               </div>
 
@@ -732,7 +732,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
             {/* Version Meta Footer */}
             <div className="text-[10px] text-zinc-400 font-mono mt-3">
-              Daybit Engine v0.1.0 • React 19 Strict • Rust Axum 0.7 • Production Ready
+              Daybit Engine v0.2.0 • React 19 Strict • Rust Axum 0.7 • Local Desktop
             </div>
           </div>
         </div>

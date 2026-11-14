@@ -1,12 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/tooling/cli/schema.json",
   "productName": "Daybit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "app.daybit.taskmanager",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "npm --prefix ../frontend run dev",
     "devUrl": "http://localhost:5173",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "npm --prefix ../frontend run build",
     "frontendDist": "../frontend/dist"
   },
   "app": {

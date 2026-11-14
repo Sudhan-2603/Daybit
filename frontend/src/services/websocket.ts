@@ -4,6 +4,19 @@ import { api } from './api';
 type Listener = (event: SyncEvent) => void;
 type StatusListener = () => void;
 
+const getWebSocketBase = (): string | null => {
+  if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
+
+  const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : '');
+  if (!apiBase) return null;
+
+  const url = new URL(apiBase);
+  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+  url.pathname = '/ws';
+  url.search = '';
+  return url.toString();
+};
+
 class WebSocketService {
   private socket: WebSocket | null = null;
   private listeners: Set<Listener> = new Set();
@@ -12,6 +25,7 @@ class WebSocketService {
   private reconnectTimer: number | null = null;
 
   public connect(explicitToken?: string) {
+    if (api.isDesktopApp()) return;
     const token = explicitToken || api.getAccessToken();
     if (!token) {
       this.disconnect();
@@ -22,7 +36,9 @@ class WebSocketService {
       return;
     }
 
-    const wsUrl = (import.meta.env.VITE_WS_URL || 'ws://localhost:4000/ws') + `?token=${encodeURIComponent(token)}`;
+    const wsBase = getWebSocketBase();
+    if (!wsBase) return;
+    const wsUrl = `${wsBase}?token=${encodeURIComponent(token)}`;
 
     try {
       this.socket = new WebSocket(wsUrl);

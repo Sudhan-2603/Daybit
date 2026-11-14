@@ -65,7 +65,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <span className="mt-1 block text-xs text-zinc-500">View or send workspace feedback</span>
               </button>
               <div className="mt-4 flex items-center justify-center gap-2 text-center text-[10px] text-zinc-400 font-mono">
-                <span>Daybit v0.1</span>
+                <span>Daybit v0.2</span>
                 <span className="text-zinc-300 dark:text-zinc-600">•</span>
                 <span className="px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 font-semibold text-[9px]">Stable Release</span>
               </div>

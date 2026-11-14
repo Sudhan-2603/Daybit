@@ -54,13 +54,15 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
             <span>Workspace Settings</span>
           </button>
 
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-semibold text-rose-600 dark:text-rose-400 transition-all duration-150"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Sign Out</span>
-          </button>
+          {user?.id !== 'offline_user' && (
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-rose-50 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-900/50 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-xs font-semibold text-rose-600 dark:text-rose-400 transition-all duration-150"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out</span>
+            </button>
+          )}
         </div>
       </div>
 

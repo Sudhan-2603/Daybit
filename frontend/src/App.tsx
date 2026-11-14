@@ -141,21 +141,25 @@ export function App() {
     setLoading(true);
     try {
       let currentUser: User | null = null;
-      try {
-        currentUser = await api.getMe();
-      } catch {
-        const storedUser = api.getUser();
-        if (storedUser) {
-          currentUser = storedUser;
-        } else if (!navigator.onLine || localStorage.getItem('daybit_is_offline') === 'true') {
-          currentUser = api.enableOfflineMode();
-        } else {
-          api.logout();
-          setUser(null);
-          setTasks([]);
-          setStats(null);
-          setAuthModalOpen(true);
-          return;
+      if (api.isDesktopApp() || !api.hasRemoteBackend()) {
+        currentUser = api.enableOfflineMode();
+      } else {
+        try {
+          currentUser = await api.getMe();
+        } catch {
+          const storedUser = api.getUser();
+          if (storedUser) {
+            currentUser = storedUser;
+          } else if (!navigator.onLine || localStorage.getItem('daybit_is_offline') === 'true') {
+            currentUser = api.enableOfflineMode();
+          } else {
+            api.logout();
+            setUser(null);
+            setTasks([]);
+            setStats(null);
+            setAuthModalOpen(true);
+            return;
+          }
         }
       }
       setUser(currentUser);
@@ -180,6 +184,7 @@ export function App() {
   }, []);
 
   const setupWebSocket = () => {
+    if (api.isOfflineSession()) return;
     const token = api.getToken();
     if (!token) return;
 

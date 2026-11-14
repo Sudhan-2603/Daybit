@@ -239,13 +239,15 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
 
               {/* Logout Button (Positioned After Profile Image) */}
-              <button
-                onClick={onLogout}
-                title="Log Out"
-                className="p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-zinc-500 hover:text-rose-500 transition-colors duration-150"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
+              {user.id !== 'offline_user' && (
+                <button
+                  onClick={onLogout}
+                  title="Log Out"
+                  className="p-1.5 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 text-zinc-500 hover:text-rose-500 transition-colors duration-150"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           ) : (
             <button
