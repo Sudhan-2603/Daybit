@@ -2,16 +2,21 @@ services:
   - type: web
     name: daybit-backend
     runtime: rust
+    rootDir: backend
     region: singapore
     plan: free
-    buildCommand: cargo build --release -p daybit-backend
+    buildCommand: cargo build --release
     startCommand: ./target/release/daybit-backend
     healthCheckPath: /health
     autoDeployTrigger: commit
     envVars:
-      # MongoDB Atlas is the only database; no Render-managed database is created.
       - key: DATABASE_URL
         sync: false
-      # Keep JWT authentication and let Render generate its signing secret.
       - key: JWT_SECRET
         generateValue: true
+      - key: PORT
+        value: 10000
+      - key: RUST_LOG
+        value: info,daybit_backend=debug
+      - key: FIREBASE_API_KEY
+        value: AIzaSyAyrC1S8pwDBHDDN8xQlttqVRv4T-eWnU4

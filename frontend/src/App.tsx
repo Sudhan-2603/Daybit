@@ -150,15 +150,9 @@ export function App() {
           const storedUser = api.getUser();
           if (storedUser) {
             currentUser = storedUser;
-          } else if (!navigator.onLine || localStorage.getItem('daybit_is_offline') === 'true') {
-            currentUser = api.enableOfflineMode();
           } else {
-            api.logout();
-            setUser(null);
-            setTasks([]);
-            setStats(null);
-            setAuthModalOpen(true);
-            return;
+            // Seamless offline fallback: never lock user out when network/backend is absent
+            currentUser = api.enableOfflineMode();
           }
         }
       }
