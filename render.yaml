@@ -2,10 +2,9 @@ services:
   - type: web
     name: daybit-backend
     runtime: rust
-    rootDir: backend
     region: singapore
     plan: free
-    buildCommand: cargo build --release
+    buildCommand: cargo build --release -p daybit-backend
     startCommand: ./target/release/daybit-backend
     healthCheckPath: /health
     autoDeployTrigger: commit
