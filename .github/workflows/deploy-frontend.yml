@@ -33,8 +33,8 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         env:
-          VITE_API_URL: ${{ vars.VITE_API_URL }}
-          VITE_WS_URL: ${{ vars.VITE_WS_URL }}
+          VITE_API_URL: ${{ vars.VITE_API_URL || 'https://daybit-backend.onrender.com' }}
+          VITE_WS_URL: ${{ vars.VITE_WS_URL || 'wss://daybit-backend.onrender.com/ws' }}
         run: npm run build
 
       - name: Add Pages marker

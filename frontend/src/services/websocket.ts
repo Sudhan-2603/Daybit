@@ -14,7 +14,7 @@ const getWebSocketBase = (): string | null => {
     }
   }
 
-  const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : '');
+  const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : 'https://daybit-backend.onrender.com');
   if (!apiBase) return null;
 
   const url = new URL(apiBase);
