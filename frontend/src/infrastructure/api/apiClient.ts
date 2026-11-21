@@ -12,7 +12,7 @@ import type {
 import { STORAGE_KEYS } from '../../domain/constants';
 import { offlineStorage } from '../storage/offlineStorage';
 
-const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : 'https://daybit-backend.onrender.com');
+const API_BASE = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : 'https://daybit.onrender.com');
 
 export class ApiClient {
   private accessToken: string | null = null;

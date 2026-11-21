@@ -7,21 +7,18 @@ type StatusListener = () => void;
 const getWebSocketBase = (): string | null => {
   if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
 
-  if (typeof window !== 'undefined') {
-    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    if (window.location.host && !window.location.host.includes('localhost') && !window.location.host.includes('127.0.0.1')) {
-      return `${proto}//${window.location.host}/ws`;
-    }
-  }
-
-  const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : 'https://daybit-backend.onrender.com');
+  const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : 'https://daybit.onrender.com');
   if (!apiBase) return null;
 
-  const url = new URL(apiBase);
-  url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
-  url.pathname = '/ws';
-  url.search = '';
-  return url.toString();
+  try {
+    const url = new URL(apiBase);
+    url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
+    url.pathname = '/ws';
+    url.search = '';
+    return url.toString();
+  } catch {
+    return 'wss://daybit.onrender.com/ws';
+  }
 };
 
 class WebSocketService {
