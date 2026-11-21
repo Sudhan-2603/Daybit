@@ -27,6 +27,8 @@ import { FeedbackModal } from './components/Modals/FeedbackModal';
 import type { Task, Place, TaskStatus, User, DashboardStats, CreateTaskDto, UpdateTaskDto } from './types';
 import { api } from './services/api';
 import { wsService } from './services/websocket';
+import { getRedirectResult } from 'firebase/auth';
+import { firebaseAuth } from './services/firebase';
 
 const mergeTasksById = (...groups: Task[][]): Task[] => {
   const unique = new Map<string, Task>();
@@ -140,6 +142,28 @@ export function App() {
   const initialize = useCallback(async () => {
     setLoading(true);
     try {
+      // Check if user is returning from a Google OAuth redirect flow
+      try {
+        const redirectRes = await getRedirectResult(firebaseAuth);
+        if (redirectRes?.user) {
+          const idToken = await redirectRes.user.getIdToken();
+          try {
+            await api.signInWithFirebase(idToken);
+          } catch {
+            const fallbackUser: User = {
+              id: redirectRes.user.uid,
+              email: redirectRes.user.email || `${redirectRes.user.uid}@daybit.app`,
+              phone_number: redirectRes.user.phoneNumber || undefined,
+              created_at: new Date().toISOString(),
+            };
+            api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
+            localStorage.setItem('daybit_user', JSON.stringify(fallbackUser));
+          }
+        }
+      } catch (redirectErr) {
+        console.warn('Redirect auth check completed:', redirectErr);
+      }
+
       const token = api.getToken();
       const stored = api.getUser();
       if (!token || !stored) {

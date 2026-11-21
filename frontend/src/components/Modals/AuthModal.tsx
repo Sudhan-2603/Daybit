@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { X, Lock, Mail, UserPlus, LogIn, Sparkles, CheckCircle2, UserCheck, AlertCircle } from 'lucide-react';
 import { api } from '../../services/api';
 import { firebaseAuth, googleProvider } from '../../services/firebase';
-import { signInWithPopup, signOut } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
 import type { User } from '../../types';
 
 interface AuthModalProps {
@@ -82,36 +82,84 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const processFirebaseUser = async (firebaseUser: any) => {
+    const idToken = await firebaseUser.getIdToken();
+    let user: User | null = null;
+    try {
+      await api.signInWithFirebase(idToken);
+      user = await api.getMe();
+    } catch (backendErr) {
+      console.warn('Backend sync deferred, establishing Firebase session profile:', backendErr);
+      user = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || `${firebaseUser.uid}@daybit.app`,
+        phone_number: firebaseUser.phoneNumber || undefined,
+        created_at: new Date().toISOString(),
+      };
+      api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
+      localStorage.setItem('daybit_user', JSON.stringify(user));
+    }
+
+    if (user) {
+      onSuccess(user);
+    }
+  };
+
+  // Check for redirect sign-in result on mount
+  useEffect(() => {
+    let active = true;
+    getRedirectResult(firebaseAuth)
+      .then(async (result) => {
+        if (!active || !result?.user) return;
+        setOauthLoading(true);
+        await processFirebaseUser(result.user);
+      })
+      .catch((err: any) => {
+        if (!active) return;
+        if (err?.code && err.code !== 'auth/null-user') {
+          console.warn('Redirect sign-in error:', err);
+          setError(err.message || 'Redirect sign-in failed.');
+        }
+      })
+      .finally(() => {
+        if (active) setOauthLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const handleGoogleSignIn = async (useRedirect = false) => {
     setError(null);
     setOauthLoading(true);
     try {
-      const result = await signInWithPopup(firebaseAuth, googleProvider);
-      const idToken = await result.user.getIdToken();
-
-      let user: User | null = null;
-      try {
-        await api.signInWithFirebase(idToken);
-        user = await api.getMe();
-      } catch (backendErr) {
-        console.warn('Backend sync deferred, establishing Firebase session profile:', backendErr);
-        user = {
-          id: result.user.uid,
-          email: result.user.email || `${result.user.uid}@daybit.app`,
-          phone_number: result.user.phoneNumber || undefined,
-          created_at: new Date().toISOString(),
-        };
-        api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
-        localStorage.setItem('daybit_user', JSON.stringify(user));
+      if (useRedirect) {
+        await signInWithRedirect(firebaseAuth, googleProvider);
+        return;
       }
 
-      if (user) {
-        onSuccess(user);
+      try {
+        const result = await signInWithPopup(firebaseAuth, googleProvider);
+        await processFirebaseUser(result.user);
+      } catch (popupErr: any) {
+        if (popupErr?.code === 'auth/popup-blocked' || popupErr?.message?.includes('popup-blocked')) {
+          console.warn('Popup blocked by browser. Falling back to redirect sign-in...');
+          setError('Sign-in pop-up was blocked. Redirecting directly to Google...');
+          await signInWithRedirect(firebaseAuth, googleProvider);
+          return;
+        }
+        throw popupErr;
       }
     } catch (err: unknown) {
       await signOut(firebaseAuth).catch(() => undefined);
-      const message = err instanceof Error ? err.message : 'Google sign-in failed.';
-      setError(message);
+      const code = (err as any)?.code;
+      if (code === 'auth/unauthorized-domain') {
+        setError('Domain not authorized: Please add "daybit.sudhan.website" to Firebase Console -> Authentication -> Settings -> Authorized domains.');
+      } else {
+        const message = err instanceof Error ? err.message : 'Google sign-in failed.';
+        setError(message);
+      }
     } finally {
       setOauthLoading(false);
     }
@@ -145,9 +193,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="p-3 text-xs rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900 flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0" />
-              <span>{error}</span>
+            <div className="space-y-2">
+              <div className="p-3 text-xs rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-900 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                <span>{error}</span>
+              </div>
+              {(error.toLowerCase().includes('pop-up') || error.toLowerCase().includes('popup')) && (
+                <button
+                  type="button"
+                  disabled={oauthLoading}
+                  onClick={() => handleGoogleSignIn(true)}
+                  className="w-full py-2 px-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition-all flex items-center justify-center gap-2 shadow-xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Click here to sign in with Google Redirect</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -241,7 +302,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           <button
             type="button"
             disabled={oauthLoading}
-            onClick={handleGoogleSignIn}
+            onClick={() => handleGoogleSignIn(false)}
             className="w-full py-2.5 rounded-full border border-zinc-200/80 dark:border-zinc-800 bg-zinc-50 hover:bg-zinc-100 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-98"
           >
             {oauthLoading ? (
