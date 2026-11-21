@@ -1,21 +1,20 @@
-# Build stage
-FROM rust:1.82-bookworm AS builder
+# Stage 1: Build Frontend (Vite + React)
+FROM node:22-alpine AS frontend-builder
+WORKDIR /usr/src/daybit/frontend
+COPY frontend/package*.json ./
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
 
-WORKDIR /usr/src/daybit
-
-# Copy manifests
-COPY backend/Cargo.toml ./backend/
-COPY backend/src ./backend/src
-
+# Stage 2: Build Backend (Rust + Axum)
+FROM rust:1.82-bookworm AS backend-builder
 WORKDIR /usr/src/daybit/backend
-
-# Build release binary
+COPY backend/Cargo.toml ./
+COPY backend/src ./src
 RUN cargo build --release
 
-# Runtime stage
+# Stage 3: Unified Production Runtime (Serves both Frontend & Backend on Daybit.sudhan.website)
 FROM debian:bookworm-slim
-
-# Install OpenSSL, CA certificates and curl for health check
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libssl3 \
@@ -24,14 +23,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy binary from builder
-COPY --from=builder /usr/src/daybit/backend/target/release/daybit-backend /app/daybit-backend
+# Copy backend binary and frontend static dist
+COPY --from=backend-builder /usr/src/daybit/backend/target/release/daybit-backend /app/daybit-backend
+COPY --from=frontend-builder /usr/src/daybit/frontend/dist /app/static
 
-# Expose default port
 EXPOSE 10000
 
 ENV PORT=10000
+ENV FRONTEND_DIR=/app/static
 ENV RUST_LOG=info
 
-# Run binary
 CMD ["/app/daybit-backend"]

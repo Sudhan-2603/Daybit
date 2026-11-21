@@ -95,12 +95,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .route("/whatsapp/webhook", get(verify_webhook).post(handle_webhook))
         .route("/health", get(|| async { "OK" }));
 
-    let app = Router::new()
+    let mut app = Router::new()
         .merge(routes.clone())
         .nest("/api", routes)
         // Realtime sync
         .route("/ws", get(ws_handler))
-        .route("/api/ws", get(ws_handler))
+        .route("/api/ws", get(ws_handler));
+
+    // Serve frontend static assets on the same domain if directory exists
+    let frontend_dir = std::env::var("FRONTEND_DIR")
+        .unwrap_or_else(|_| "../frontend/dist".to_string());
+    if std::path::Path::new(&frontend_dir).exists() {
+        app = app.fallback(static_handler);
+    }
+
+    let app = app
         .layer(cors)
         .layer(TraceLayer::new_for_http())
         .with_state(state);
@@ -112,4 +121,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     axum::serve(listener, app).await?;
 
     Ok(())
+}
+
+async fn static_handler(uri: axum::http::Uri) -> axum::response::Response {
+    use axum::response::IntoResponse;
+    let path = uri.path().trim_start_matches('/');
+    let frontend_dir = std::env::var("FRONTEND_DIR")
+        .unwrap_or_else(|_| "../frontend/dist".to_string());
+    let mut file_path = std::path::PathBuf::from(&frontend_dir).join(path);
+    if !file_path.exists() || file_path.is_dir() {
+        file_path = std::path::PathBuf::from(&frontend_dir).join("index.html");
+    }
+
+    match tokio::fs::read(&file_path).await {
+        Ok(bytes) => {
+            let mime = match file_path.extension().and_then(|s| s.to_str()) {
+                Some("js") => "application/javascript",
+                Some("css") => "text/css",
+                Some("svg") => "image/svg+xml",
+                Some("png") => "image/png",
+                Some("ico") => "image/x-icon",
+                Some("json") => "application/json",
+                Some("woff2") => "font/woff2",
+                _ => "text/html; charset=utf-8",
+            };
+
+            axum::response::Response::builder()
+                .header(axum::http::header::CONTENT_TYPE, mime)
+                .body(axum::body::Body::from(bytes))
+                .unwrap_or_else(|_| axum::http::StatusCode::INTERNAL_SERVER_ERROR.into_response())
+        }
+        Err(_) => axum::http::StatusCode::NOT_FOUND.into_response(),
+    }
 }

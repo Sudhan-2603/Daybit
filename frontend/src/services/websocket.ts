@@ -7,6 +7,13 @@ type StatusListener = () => void;
 const getWebSocketBase = (): string | null => {
   if (import.meta.env.VITE_WS_URL) return import.meta.env.VITE_WS_URL;
 
+  if (typeof window !== 'undefined') {
+    const proto = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    if (window.location.host && !window.location.host.includes('localhost') && !window.location.host.includes('127.0.0.1')) {
+      return `${proto}//${window.location.host}/ws`;
+    }
+  }
+
   const apiBase = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://127.0.0.1:4000' : '');
   if (!apiBase) return null;
 
