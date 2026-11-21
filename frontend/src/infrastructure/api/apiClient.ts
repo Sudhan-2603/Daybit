@@ -75,7 +75,6 @@ export class ApiClient {
 
   public logout() {
     this.clearTokens();
-    this.enableOfflineMode();
   }
 
   public getToken(): string | null {
@@ -97,14 +96,10 @@ export class ApiClient {
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    if (offlineStorage.isOfflineSession() || !navigator.onLine) {
-      throw new Error('Daybit is running in offline mode.');
-    }
-
     const headers = new Headers(options.headers || {});
     headers.set('Content-Type', 'application/json');
 
-    if (this.accessToken && !this.accessToken.startsWith('offline_token_')) {
+    if (this.accessToken) {
       headers.set('Authorization', `Bearer ${this.accessToken}`);
     }
 
@@ -200,11 +195,7 @@ export class ApiClient {
   }
 
   async getMe(): Promise<User> {
-    try {
-      return await this.request<User>('/auth/me');
-    } catch {
-      return this.getUser() || offlineStorage.enableOfflineSession();
-    }
+    return this.request<User>('/auth/me');
   }
 
   async getTasks(params?: { place?: Place | 'All'; status?: TaskStatus; search?: string }): Promise<Task[]> {

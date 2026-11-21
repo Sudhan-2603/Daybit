@@ -24,11 +24,13 @@ pub struct Db {
 
 impl Db {
     pub async fn init(database_url: &str) -> Result<Self, AppError> {
+        tracing::info!("Parsing MongoDB connection settings");
         let client = Client::with_uri_str(database_url).await
             .map_err(|e| AppError::Internal(format!("MongoDB connection failed: {e}")))?;
         let database = client.default_database()
             .ok_or_else(|| AppError::Internal("MongoDB URI must include a database name".to_string()))?;
         let collection = database.collection::<mongodb::bson::Document>("daybit_state");
+        tracing::info!("Checking MongoDB connectivity and loading Daybit data");
         let data = match collection.find_one(doc! { "_id": "daybit" }, None).await
             .map_err(|e| AppError::Internal(format!("MongoDB read failed: {e}")))? {
             Some(document) => document.get_document("data")

@@ -141,19 +141,19 @@ export function App() {
     setLoading(true);
     try {
       let currentUser: User | null = null;
-      if (api.isDesktopApp() || !api.hasRemoteBackend()) {
-        currentUser = api.enableOfflineMode();
-      } else {
-        try {
-          currentUser = await api.getMe();
-        } catch {
-          const storedUser = api.getUser();
-          if (storedUser) {
-            currentUser = storedUser;
-          } else {
-            // Seamless offline fallback: never lock user out when network/backend is absent
-            currentUser = api.enableOfflineMode();
-          }
+      try {
+        currentUser = await api.getMe();
+      } catch {
+        const storedUser = api.getUser();
+        if (storedUser) {
+          currentUser = storedUser;
+        } else {
+          api.logout();
+          setUser(null);
+          setTasks([]);
+          setStats(null);
+          setAuthModalOpen(true);
+          return;
         }
       }
       setUser(currentUser);
@@ -178,7 +178,6 @@ export function App() {
   }, []);
 
   const setupWebSocket = () => {
-    if (api.isOfflineSession()) return;
     const token = api.getToken();
     if (!token) return;
 

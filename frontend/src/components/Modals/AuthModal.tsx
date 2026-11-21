@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Lock, Mail, UserPlus, LogIn, Sparkles, WifiOff } from 'lucide-react';
+import { X, Lock, Mail, UserPlus, LogIn, Sparkles } from 'lucide-react';
 import { api } from '../../services/api';
 import { firebaseAuth, googleProvider } from '../../services/firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
@@ -79,12 +79,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     } finally {
       setOauthLoading(false);
     }
-  };
-
-  const handleOfflineMode = () => {
-    const offlineUser = api.enableOfflineMode();
-    onSuccess(offlineUser);
-    onClose();
   };
 
   return (
@@ -193,21 +187,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 <span>Continue with Google</span>
               </>
             )}
-          </button>
-
-          <div className="relative flex items-center py-1">
-            <div className="flex-1 border-t border-zinc-200 dark:border-zinc-800" />
-            <span className="px-3 text-[10px] text-zinc-400">NO INTERNET / LOCAL</span>
-            <div className="flex-1 border-t border-zinc-200 dark:border-zinc-800" />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleOfflineMode}
-            className="w-full py-2.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-semibold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border border-zinc-200/80 dark:border-zinc-800 active:scale-98"
-          >
-            <WifiOff className="w-4 h-4 text-zinc-400" />
-            <span>Continue in Offline Mode</span>
           </button>
 
           <div className="text-center pt-2">

@@ -11,8 +11,7 @@ export function useAuth() {
       const current = await api.getMe();
       setUser(current);
     } catch {
-      const offlineUser = api.enableOfflineMode();
-      setUser(offlineUser);
+      setUser(null);
     }
   }, []);
 
@@ -22,7 +21,7 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     api.logout();
-    setUser(api.enableOfflineMode());
+    setUser(null);
   }, []);
 
   return {
@@ -30,7 +29,7 @@ export function useAuth() {
     setUser,
     authModalOpen,
     setAuthModalOpen,
-    isOffline: api.isOfflineSession(),
+    isOffline: false,
     logout,
   };
 }
