@@ -11,6 +11,26 @@ use crate::{
     models::{LoginDto, RefreshDto, RegisterDto, TokenPair, User, UserResponse},
     AppState,
 };
+use serde::Serialize;
+
+#[derive(Deserialize)]
+pub struct CheckEmailDto {
+    pub email: String,
+}
+
+#[derive(Serialize)]
+pub struct CheckEmailResponse {
+    pub exists: bool,
+}
+
+pub async fn check_email(
+    State(state): State<AppState>,
+    Json(payload): Json<CheckEmailDto>,
+) -> Result<Json<CheckEmailResponse>, AppError> {
+    let email = payload.email.trim().to_lowercase();
+    let exists = state.db.find_user_by_email(&email).await.is_some();
+    Ok(Json(CheckEmailResponse { exists }))
+}
 
 #[derive(Deserialize)]
 pub struct FirebaseLoginDto {

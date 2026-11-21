@@ -8,7 +8,6 @@ import type {
   User,
 } from '../../domain/models';
 import {
-  DEFAULT_OFFLINE_USER,
   DEFAULT_STARTER_TASKS,
   STORAGE_KEYS,
 } from '../../domain/constants';
@@ -28,14 +27,13 @@ export class OfflineStorageEngine {
   public getTasks(): Task[] {
     const raw = localStorage.getItem(STORAGE_KEYS.OFFLINE_TASKS);
     if (!raw) {
-      this.saveTasks(DEFAULT_STARTER_TASKS);
-      return DEFAULT_STARTER_TASKS;
+      return [];
     }
     try {
       const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_STARTER_TASKS;
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
-      return DEFAULT_STARTER_TASKS;
+      return [];
     }
   }
 
@@ -43,7 +41,7 @@ export class OfflineStorageEngine {
     localStorage.setItem(STORAGE_KEYS.OFFLINE_TASKS, JSON.stringify(tasks));
   }
 
-  public createTask(input: CreateTaskInput, userId: string = 'offline_user'): Task {
+  public createTask(input: CreateTaskInput, userId: string = 'default'): Task {
     const newTask: Task = {
       id: 'task_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 6),
       user_id: userId,
@@ -83,7 +81,7 @@ export class OfflineStorageEngine {
     if (!updatedTask) {
       updatedTask = {
         id,
-        user_id: 'offline_user',
+        user_id: 'default',
         name: input.name || 'Task',
         description: input.description || '',
         status: input.status || 'To Do',
@@ -140,31 +138,9 @@ export class OfflineStorageEngine {
     };
   }
 
-  public getOfflineUser(): User {
-    const raw = localStorage.getItem(STORAGE_KEYS.USER);
-    if (raw) {
-      try {
-        return JSON.parse(raw);
-      } catch {
-        // fallback
-      }
-    }
-    return DEFAULT_OFFLINE_USER;
-  }
-
-  public enableOfflineSession(): User {
-    const user = this.getOfflineUser();
-    localStorage.setItem(STORAGE_KEYS.IS_OFFLINE, 'true');
-    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
-    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, 'offline_token_' + Date.now());
-    if (!localStorage.getItem(STORAGE_KEYS.OFFLINE_TASKS)) {
-      this.saveTasks(DEFAULT_STARTER_TASKS);
-    }
-    return user;
-  }
-
-  public isOfflineSession(): boolean {
-    return localStorage.getItem(STORAGE_KEYS.IS_OFFLINE) === 'true';
+  public clearStorage(): void {
+    localStorage.removeItem(STORAGE_KEYS.OFFLINE_TASKS);
+    localStorage.removeItem(STORAGE_KEYS.IS_OFFLINE);
   }
 }
 

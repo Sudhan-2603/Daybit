@@ -24,19 +24,12 @@ export const STORAGE_KEYS = {
   START_MINIMIZED: 'daybit_start_minimized',
 } as const;
 
-export const DEFAULT_OFFLINE_USER = {
-  id: 'offline_user',
-  email: 'offline@daybit.local',
-  phone_number: undefined,
-  created_at: new Date('2026-01-01T00:00:00.000Z').toISOString(),
-};
-
 export const DEFAULT_STARTER_TASKS: Task[] = [
   {
     id: 'task_starter_1',
-    user_id: 'offline_user',
-    name: 'Welcome to Daybit Offline Workspace',
-    description: 'Daybit works completely offline. Your tasks, Kanban cards, and focus timers are saved in local storage automatically.',
+    user_id: 'default',
+    name: 'Welcome to Daybit',
+    description: 'Your unified workspace for tasks, focus timers, and team productivity.',
     status: 'In Progress',
     place: 'Personal',
     progress_done: 1,
@@ -47,7 +40,7 @@ export const DEFAULT_STARTER_TASKS: Task[] = [
   },
   {
     id: 'task_starter_2',
-    user_id: 'offline_user',
+    user_id: 'default',
     name: 'Drag Cards Across Kanban Columns',
     description: 'Try moving this card from To Do to In Progress or Complete with smooth physics.',
     status: 'To Do',
@@ -60,7 +53,7 @@ export const DEFAULT_STARTER_TASKS: Task[] = [
   },
   {
     id: 'task_starter_3',
-    user_id: 'offline_user',
+    user_id: 'default',
     name: 'Start a Pomodoro Focus Session',
     description: 'Launch the built-in timer for 25-minute deep focus intervals.',
     status: 'To Do',

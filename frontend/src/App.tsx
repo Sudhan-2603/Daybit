@@ -140,21 +140,27 @@ export function App() {
   const initialize = useCallback(async () => {
     setLoading(true);
     try {
+      const token = api.getToken();
+      const stored = api.getUser();
+      if (!token || !stored) {
+        api.clearTokens();
+        setUser(null);
+        setTasks([]);
+        setStats(null);
+        setAuthModalOpen(true);
+        return;
+      }
+
       let currentUser: User | null = null;
       try {
         currentUser = await api.getMe();
       } catch {
-        const storedUser = api.getUser();
-        if (storedUser) {
-          currentUser = storedUser;
-        } else {
-          api.logout();
-          setUser(null);
-          setTasks([]);
-          setStats(null);
-          setAuthModalOpen(true);
-          return;
-        }
+        api.clearTokens();
+        setUser(null);
+        setTasks([]);
+        setStats(null);
+        setAuthModalOpen(true);
+        return;
       }
       setUser(currentUser);
 
@@ -172,6 +178,11 @@ export function App() {
       setupWebSocket();
     } catch (err) {
       console.error('Initialization error:', err);
+      api.clearTokens();
+      setUser(null);
+      setTasks([]);
+      setStats(null);
+      setAuthModalOpen(true);
     } finally {
       setLoading(false);
     }
@@ -615,9 +626,12 @@ export function App() {
 
       <AuthModal
         isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
+        onClose={() => {
+          if (user) setAuthModalOpen(false);
+        }}
         onSuccess={(u) => {
           setUser(u);
+          setAuthModalOpen(false);
           initialize();
         }}
       />

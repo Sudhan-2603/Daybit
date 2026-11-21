@@ -32,19 +32,7 @@ export class ApiClient {
   }
 
   public isOfflineSession(): boolean {
-    return offlineStorage.isOfflineSession() || !navigator.onLine || !this.accessToken;
-  }
-
-  public getOfflineTasks(): Task[] {
-    return offlineStorage.getTasks();
-  }
-
-  public saveOfflineTasks(tasks: Task[]): void {
-    offlineStorage.saveTasks(tasks);
-  }
-
-  public enableOfflineMode(): User {
-    return offlineStorage.enableOfflineSession();
+    return false;
   }
 
   public setTokens(tokensOrAccess: TokenPair | string, refresh?: string) {
@@ -71,6 +59,8 @@ export class ApiClient {
     localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
     localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN);
     localStorage.removeItem(STORAGE_KEYS.USER);
+    localStorage.removeItem('daybit_is_offline');
+    localStorage.removeItem('daybit_offline_tasks');
   }
 
   public logout() {
@@ -89,9 +79,26 @@ export class ApiClient {
     const raw = localStorage.getItem(STORAGE_KEYS.USER);
     if (!raw) return null;
     try {
-      return JSON.parse(raw);
+      const u = JSON.parse(raw);
+      if (!u || u.id === 'offline_user' || u.email?.includes('offline') || !this.accessToken) {
+        this.clearTokens();
+        return null;
+      }
+      return u;
     } catch {
+      this.clearTokens();
       return null;
+    }
+  }
+
+  async checkEmail(email: string): Promise<{ exists: boolean }> {
+    try {
+      return await this.request<{ exists: boolean }>('/auth/check-email', {
+        method: 'POST',
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+    } catch {
+      return { exists: false };
     }
   }
 
@@ -175,23 +182,12 @@ export class ApiClient {
   }
 
   async signInWithFirebase(idToken: string): Promise<TokenPair> {
-    try {
-      const data = await this.request<TokenPair>('/auth/firebase', {
-        method: 'POST',
-        body: JSON.stringify({ id_token: idToken }),
-      });
-      this.setTokens(data);
-      return data;
-    } catch {
-      const user = offlineStorage.getOfflineUser();
-      const tokenPair: TokenPair = {
-        access_token: 'firebase_session_' + Date.now(),
-        refresh_token: 'firebase_refresh',
-        user,
-      };
-      this.setTokens(tokenPair);
-      return tokenPair;
-    }
+    const data = await this.request<TokenPair>('/auth/firebase', {
+      method: 'POST',
+      body: JSON.stringify({ id_token: idToken }),
+    });
+    this.setTokens(data);
+    return data;
   }
 
   async getMe(): Promise<User> {
@@ -199,79 +195,37 @@ export class ApiClient {
   }
 
   async getTasks(params?: { place?: Place | 'All'; status?: TaskStatus; search?: string }): Promise<Task[]> {
-    try {
-      const query = new URLSearchParams();
-      if (params?.place && params.place !== 'All') query.set('place', params.place);
-      if (params?.status) query.set('status', params.status);
-      if (params?.search) query.set('search', params.search);
+    const query = new URLSearchParams();
+    if (params?.place && params.place !== 'All') query.set('place', params.place);
+    if (params?.status) query.set('status', params.status);
+    if (params?.search) query.set('search', params.search);
 
-      const qs = query.toString();
-      const tasks = await this.request<Task[]>(`/tasks${qs ? `?${qs}` : ''}`);
-      this.saveOfflineTasks(tasks);
-      return tasks;
-    } catch {
-      let tasks = offlineStorage.getTasks();
-      if (params?.place && params.place !== 'All') {
-        tasks = tasks.filter((t) => t.place === params.place);
-      }
-      if (params?.status) {
-        tasks = tasks.filter((t) => t.status === params.status);
-      }
-      if (params?.search) {
-        const s = params.search.toLowerCase();
-        tasks = tasks.filter(
-          (t) => t.name.toLowerCase().includes(s) || t.description?.toLowerCase().includes(s)
-        );
-      }
-      return tasks;
-    }
+    const qs = query.toString();
+    return this.request<Task[]>(`/tasks${qs ? `?${qs}` : ''}`);
   }
 
   async createTask(input: CreateTaskInput): Promise<Task> {
-    try {
-      const task = await this.request<Task>('/tasks', {
-        method: 'POST',
-        body: JSON.stringify(input),
-      });
-      const current = offlineStorage.getTasks();
-      offlineStorage.saveTasks([task, ...current]);
-      return task;
-    } catch {
-      return offlineStorage.createTask(input, this.getUser()?.id || 'offline_user');
-    }
+    return this.request<Task>('/tasks', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    });
   }
 
   async updateTask(id: string, input: UpdateTaskInput): Promise<Task> {
-    try {
-      const task = await this.request<Task>(`/tasks/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(input),
-      });
-      offlineStorage.updateTask(id, task);
-      return task;
-    } catch {
-      return offlineStorage.updateTask(id, input);
-    }
+    return this.request<Task>(`/tasks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(input),
+    });
   }
 
   async deleteTask(id: string): Promise<{ success: boolean; deleted_id: string }> {
-    try {
-      const res = await this.request<{ success: boolean; deleted_id: string }>(`/tasks/${id}`, {
-        method: 'DELETE',
-      });
-      offlineStorage.deleteTask(id);
-      return res;
-    } catch {
-      return offlineStorage.deleteTask(id);
-    }
+    return this.request<{ success: boolean; deleted_id: string }>(`/tasks/${id}`, {
+      method: 'DELETE',
+    });
   }
 
   async getDashboard(): Promise<DashboardStats> {
-    try {
-      return await this.request<DashboardStats>('/dashboard');
-    } catch {
-      return offlineStorage.getDashboardStats();
-    }
+    return this.request<DashboardStats>('/dashboard');
   }
 
   async getDashboardStats(): Promise<DashboardStats> {

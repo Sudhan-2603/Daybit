@@ -105,7 +105,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <span className="text-zinc-500">Live Sync Engine</span>
                 <span className={`font-semibold flex items-center gap-1 ${wsConnected ? 'text-emerald-500' : 'text-amber-500'}`}>
                   <Wifi className="w-3.5 h-3.5" />
-                  <span>{wsConnected ? 'WebSocket Online' : 'Offline'}</span>
+                  <span>{wsConnected ? 'WebSocket Connected' : 'Realtime Standby'}</span>
                 </span>
               </div>
             </div>
