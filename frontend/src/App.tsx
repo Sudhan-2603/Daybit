@@ -30,9 +30,17 @@ import { wsService } from './services/websocket';
 import { getRedirectResult } from 'firebase/auth';
 import { firebaseAuth } from './services/firebase';
 
-const mergeTasksById = (...groups: Task[][]): Task[] => {
+const mergeTasksById = (...groups: (Task[] | undefined | null)[]): Task[] => {
   const unique = new Map<string, Task>();
-  groups.flat().forEach((task) => { if (!unique.has(task.id)) unique.set(task.id, task); });
+  groups.forEach((group) => {
+    if (Array.isArray(group)) {
+      group.forEach((task) => {
+        if (task && typeof task === 'object' && typeof task.id === 'string' && !unique.has(task.id)) {
+          unique.set(task.id, task);
+        }
+      });
+    }
+  });
   return [...unique.values()];
 };
 
@@ -142,9 +150,12 @@ export function App() {
   const initialize = useCallback(async () => {
     setLoading(true);
     try {
-      // Check if user is returning from a Google OAuth redirect flow
+      // Check if user is returning from a Google OAuth redirect flow (with 1500ms safety timeout)
       try {
-        const redirectRes = await getRedirectResult(firebaseAuth);
+        const redirectRes = await Promise.race([
+          getRedirectResult(firebaseAuth),
+          new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500))
+        ]);
         if (redirectRes?.user) {
           const idToken = await redirectRes.user.getIdToken();
           try {

@@ -79,7 +79,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
 
               <div>
                 <h2 className="text-lg font-bold text-black dark:text-white">
-                  {user ? user.email.split('@')[0] : 'Demo User'}
+                  {user?.email ? user.email.split('@')[0] : 'User'}
                 </h2>
                 <p className="text-xs text-zinc-400 font-mono">
                   {user?.email || 'demo@daybit.app'}

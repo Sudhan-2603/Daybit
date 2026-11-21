@@ -190,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   title="My Profile & Settings"
                 >
                   <span className="w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-white border border-zinc-300 dark:border-zinc-700 flex items-center justify-center text-[11px] font-bold">
-                    {user.email.charAt(0).toUpperCase()}
+                    {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
                   </span>
                   <ChevronDown className="w-3 h-3 text-zinc-400" />
                 </button>
@@ -205,10 +205,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="absolute right-0 mt-2 w-48 backdrop-blur-2xl bg-white/95 dark:bg-black/95 rounded-2xl shadow-xl border border-zinc-200/80 dark:border-zinc-800 py-1.5 z-30 animate-linear-enter">
                       <div className="px-3.5 py-2 border-b border-zinc-100 dark:border-zinc-800/80">
                         <span className="block text-xs font-bold text-black dark:text-white truncate">
-                          {user.email.split('@')[0]}
+                          {user.email ? user.email.split('@')[0] : 'User'}
                         </span>
                         <span className="block text-[10px] text-zinc-400 truncate">
-                          {user.email}
+                          {user.email || 'user@daybit.app'}
                         </span>
                       </div>
 

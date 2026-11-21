@@ -5,6 +5,9 @@
     <link rel="icon" type="image/png" href="/daybit-logo.png" />
     <link rel="apple-touch-icon" href="/daybit-logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Daybit</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +15,21 @@
   </head>
   <body class="font-sans antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
     <div id="root"></div>
+    <script>
+      window.addEventListener('error', function(e) {
+        console.error('Daybit runtime error:', e);
+        var r = document.getElementById('root');
+        if (r && (!r.childNodes || r.childNodes.length === 0)) {
+          r.innerHTML = '<div style="font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:#09090b;color:#f4f4f5;">' +
+            '<div style="max-width:400px;width:100%;background:#18181b;border:1px solid #27272a;border-radius:24px;padding:32px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,0.5);">' +
+              '<h2 style="font-size:18px;font-weight:700;margin-bottom:8px;">Daybit Workspace</h2>' +
+              '<p style="font-size:13px;color:#a1a1aa;margin-bottom:24px;">Refreshing cached application assets...</p>' +
+              '<button onclick="localStorage.clear();window.location.reload(true);" style="background:#fff;color:#000;border:none;padding:12px 24px;border-radius:9999px;font-size:13px;font-weight:600;cursor:pointer;">Refresh Workspace</button>' +
+            '</div>' +
+          '</div>';
+        }
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
