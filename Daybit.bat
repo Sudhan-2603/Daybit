@@ -1,14 +1,26 @@
 @echo off
 setlocal
 
-set "APP=%LOCALAPPDATA%\Daybit\Daybit.exe"
+echo Starting Daybit Desktop Application for Windows...
+
+set "APP=%~dp0Daybit.exe"
+if not exist "%APP%" set "APP=%LOCALAPPDATA%\Daybit\Daybit.exe"
 if not exist "%APP%" set "APP=%~dp0releases\v0.2\windows\Daybit-v0.2.exe"
 
-if not exist "%APP%" (
-    echo Daybit desktop app was not found. Build or install the v0.2 release first.
-    exit /b 1
+if exist "%APP%" (
+    start "" "%APP%"
+    exit /b 0
 )
 
-start "" "%APP%"
-exit /b 0
+:: Direct Native App Mode Launch (No localhost errors)
+set "EDGE=C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+if not exist "%EDGE%" set "EDGE=C:\Program Files\Microsoft\Edge\Application\msedge.exe"
 
+if exist "%EDGE%" (
+    start "" "%EDGE%" --app="https://daybit.sudhan.website" --window-size=1280,840
+    exit /b 0
+)
+
+:: Browser fallback
+start https://daybit.sudhan.website
+exit /b 0
