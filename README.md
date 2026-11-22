@@ -247,21 +247,22 @@ Daybit/
 
 ---
 
-## 📦 Multi-OS Builds
+## 📦 Multi-OS Cross-Platform Applications
 
-First build the production frontend bundle:
-```bash
-cd frontend && npm run build && cd ..
-```
+Daybit packages are available for **Windows**, **Ubuntu**, **Arch Linux**, and **Android Mobile (APK)**. Full documentation is available in **[releases/CROSS_PLATFORM_APPS.md](releases/CROSS_PLATFORM_APPS.md)**.
 
-| Platform | Command |
-| :--- | :--- |
-| **Windows** (`.msi` / `.exe`) | `cargo tauri build --target x86_64-pc-windows-msvc` |
-| **Linux** (`.AppImage` / `.deb`) | `cargo tauri build --bundles appimage,deb` |
-| **Android** (`.apk`) | `cargo tauri android init && cargo tauri android build --apk` |
+| Platform | Format | Operating System Target | Command / Installation |
+| :--- | :--- | :--- | :--- |
+| **Windows** | `.exe` / `.msi` | Windows 10 & 11 (x64) | Run `Daybit-Setup.exe` or `Daybit-Setup.msi` |
+| **Ubuntu / Debian** | `.deb` | Ubuntu 20.04+, Debian, Mint | `sudo dpkg -i daybit_0.2.0_amd64.deb` |
+| **Arch Linux** | `.AppImage` | Arch Linux, Manjaro, EndeavourOS, Fedora | `chmod +x Daybit-0.2.0.AppImage && ./Daybit-0.2.0.AppImage` |
+| **Mobile Android** | `.apk` | Android 7.0 - 14+ | Tap `Daybit-v0.2.0.apk` on your phone to install |
+
+### Automated Cloud Builds via GitHub Actions
+Every release is automatically compiled across Windows, Ubuntu, Arch Linux, and Android runners via [`.github/workflows/build-all-platforms.yml`](.github/workflows/build-all-platforms.yml). Download the latest builds directly from the **[Actions Tab Artifacts](https://github.com/Sudhan-2603/Daybit/actions)**.
 
 ---
 
 <div align="center">
-  <sub>Built with Rust, React, TypeScript &amp; Tauri 2</sub>
+  <sub>Built with Rust, React 19, TypeScript, Tauri 2 &amp; Capacitor</sub>
 </div>

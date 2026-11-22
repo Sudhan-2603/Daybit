@@ -1,0 +1,183 @@
+name: Build All Cross-Platform Apps (Windows, Ubuntu, Arch Linux, Android APK)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Windows (EXE & MSI Installer)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Build Windows Tauri Bundle (EXE & MSI)
+        run: |
+          npx @tauri-apps/cli build --bundles msi,nsis
+
+      - name: Organize Windows Release Binaries
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist-windows | Out-Null
+          Get-ChildItem -Path target/release/bundle -Recurse -Include *.msi, *.exe | ForEach-Object {
+            Copy-Item $_.FullName -Destination dist-windows/ -Force
+          }
+          Get-ChildItem -Path dist-windows
+
+      - name: Upload Windows Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daybit-Windows-Installers
+          path: dist-windows/
+          if-no-files-found: error
+
+  build-linux:
+    name: Linux (Ubuntu .deb & Arch Linux .AppImage)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Linux Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      - name: Build Linux Tauri Bundle (deb & AppImage)
+        run: |
+          npx @tauri-apps/cli build --bundles deb,appimage
+
+      - name: Organize Linux Release Binaries
+        run: |
+          mkdir -p dist-linux
+          find target/release/bundle -type f \( -name "*.deb" -o -name "*.AppImage" \) -exec cp {} dist-linux/ \;
+          ls -la dist-linux/
+
+      - name: Upload Linux Artifacts (Ubuntu & Arch)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daybit-Linux-Ubuntu-Arch
+          path: dist-linux/
+          if-no-files-found: error
+
+  build-android:
+    name: Android (Mobile APK)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+      - name: Build & Sync Capacitor Android
+        run: |
+          cd frontend
+          npm run build:android
+
+      - name: Assemble Android APK with Gradle
+        run: |
+          cd frontend/android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Organize Android APK Release
+        run: |
+          mkdir -p dist-android
+          cp frontend/android/app/build/outputs/apk/debug/app-debug.apk dist-android/Daybit-v0.2.0.apk
+          ls -la dist-android/
+
+      - name: Upload Android APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Daybit-Android-APK
+          path: dist-android/Daybit-v0.2.0.apk
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release (When Tagged)
+    needs: [build-windows, build-linux, build-android]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-releases
+
+      - name: Create GitHub Release with all platform packages
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            all-releases/Daybit-Windows-Installers/*
+            all-releases/Daybit-Linux-Ubuntu-Arch/*
+            all-releases/Daybit-Android-APK/*
+          generate_release_notes: true
+          draft: false
+          prerelease: false

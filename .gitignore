@@ -52,3 +52,17 @@ Project.txt
 
 
 !releases/**/*.exe
+
+# Android Build Artifacts & Output Dist
+**/android/.gradle/
+**/android/build/
+**/android/app/build/
+**/android/.idea/
+**/android/*.iml
+**/android/app/*.iml
+**/android/local.properties
+dist-windows/
+dist-linux/
+dist-android/
+all-releases/
+
