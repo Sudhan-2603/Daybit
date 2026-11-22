@@ -15,8 +15,15 @@ impl Config {
     pub fn from_env() -> Self {
         dotenvy::dotenv().ok();
 
-        let database_url = env::var("DATABASE_URL")
-            .unwrap_or_else(|_| "mongodb://localhost:27017/daybit".to_string());
+        let raw_db_url = env::var("DATABASE_URL")
+            .unwrap_or_else(|_| "mongodb+srv://gomathisudhan552_db_user:IwW811FG2oWGgFX2@daybit.hblf44y.mongodb.net/Daybit?retryWrites=true&w=majority".to_string());
+        let database_url = if raw_db_url.contains("/daybit?") {
+            raw_db_url.replace("/daybit?", "/Daybit?")
+        } else if raw_db_url.ends_with("/daybit") {
+            format!("{}/Daybit", &raw_db_url[..raw_db_url.len() - 7])
+        } else {
+            raw_db_url
+        };
         let jwt_secret = env::var("JWT_SECRET")
             .unwrap_or_else(|_| "daybit_super_secret_jwt_key_2026_dev_mode".to_string());
         let port = env::var("PORT")

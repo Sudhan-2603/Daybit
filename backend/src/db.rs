@@ -32,21 +32,10 @@ impl Db {
             .map(|db| db.name().to_string())
             .unwrap_or_else(|| "Daybit".to_string());
 
-        let target_db_name = match client.list_database_names(None, None).await {
-            Ok(names) => {
-                if let Some(existing) = names.into_iter().find(|n| n.eq_ignore_ascii_case(&default_db_name)) {
-                    existing
-                } else {
-                    default_db_name
-                }
-            }
-            Err(_) => {
-                if default_db_name == "daybit" {
-                    "Daybit".to_string()
-                } else {
-                    default_db_name
-                }
-            }
+        let target_db_name = if default_db_name.eq_ignore_ascii_case("daybit") {
+            "Daybit".to_string()
+        } else {
+            default_db_name
         };
 
         tracing::info!("Using MongoDB database: {}", target_db_name);
