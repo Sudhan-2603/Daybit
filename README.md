@@ -21,12 +21,13 @@
 
 <p>
   <a href="#-why-daybit">About</a> •
+  <a href="#-screenshots">Screenshots</a> •
   <a href="#-feature-highlights">Features</a> •
   <a href="#%EF%B8%8F-architecture">Architecture</a> •
-  <a href="releases/v0.2/"><strong>Release v0.2</strong></a> •
+  <a href="releases/CROSS_PLATFORM_APPS.md"><strong>Cross-Platform Apps</strong></a> •
   <a href="#-getting-started">Quick Start</a> •
   <a href="#-api--websocket">API</a> •
-  <a href="#-multi-os-builds">Builds</a>
+  <a href="#-multi-os-cross-platform-applications">Builds</a>
 </p>
 
 </div>
@@ -86,6 +87,76 @@ Designed around a monochrome **frosted-glass aesthetic** (`#000000` / `#ffffff`)
     </td>
   </tr>
 </table>
+
+---
+
+## 📸 Screenshots
+
+### 📊 Dashboard & Task Analytics
+<table>
+  <tr>
+    <td width="50%"><strong>Dashboard Overview (Light Theme)</strong></td>
+    <td width="50%"><strong>Dashboard Overview (Dark Theme)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/dashboard-light.png" alt="Daybit Dashboard Light Theme" /></td>
+    <td><img src="Screenshots/dashboard-dark.png" alt="Daybit Dashboard Dark Theme" /></td>
+  </tr>
+</table>
+
+### 📋 Task Kanban Board & Task Creation
+<table>
+  <tr>
+    <td width="60%"><strong>Kanban Columns Workflow & Place Badges</strong></td>
+    <td width="40%"><strong>Create New Task Modal</strong></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/tasks-kanban-light.png" alt="Daybit Tasks Kanban Workflow" /></td>
+    <td><img src="Screenshots/create-task-modal.png" alt="Create New Task Modal" /></td>
+  </tr>
+</table>
+
+### 📅 Calendar & Deadline Timeline
+<table>
+  <tr>
+    <td width="50%"><strong>Scheduled Timeline (Light Theme)</strong></td>
+    <td width="50%"><strong>Scheduled Timeline (Dark Theme)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/calendar-light.png" alt="Daybit Calendar Light Theme" /></td>
+    <td><img src="Screenshots/calendar-dark.png" alt="Daybit Calendar Dark Theme" /></td>
+  </tr>
+</table>
+
+### 🔑 Day - Personal AI Assistance API Key Generator
+<table>
+  <tr>
+    <td width="50%"><strong>General Settings & API Keys (Light)</strong></td>
+    <td width="50%"><strong>General Settings & API Keys (Dark)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/settings-general-light.png" alt="Settings API Keys Light" /></td>
+    <td><img src="Screenshots/settings-general-dark.png" alt="Settings API Keys Dark" /></td>
+  </tr>
+</table>
+
+### 🎨 Customization, Themes & Typography
+<table>
+  <tr>
+    <td width="50%"><strong>Appearance Theme & Color Palettes (Light)</strong></td>
+    <td width="50%"><strong>Appearance Theme & Color Palettes (Dark)</strong></td>
+  </tr>
+  <tr>
+    <td><img src="Screenshots/settings-appearance-light.png" alt="Settings Appearance Light" /></td>
+    <td><img src="Screenshots/settings-appearance-dark.png" alt="Settings Appearance Dark" /></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="Screenshots/settings-typography-views-light.png" alt="Global Typography & Tasks Views" width="100%" />
+  <br />
+  <em>Global Typography (Inter, Roboto, Poppins, Tamil, Telugu, Hindi) and Default Task View Layouts</em>
+</p>
 
 ---
 
