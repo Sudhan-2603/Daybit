@@ -95,25 +95,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
   const processFirebaseUser = async (firebaseUser: any) => {
     const idToken = await firebaseUser.getIdToken();
-    let user: User | null = null;
     try {
       const res = await api.signInWithFirebase(idToken);
       api.setTokens(res);
-      user = res.user || await api.getMe();
-    } catch (backendErr) {
-      console.warn('Backend sync deferred, establishing Firebase session profile:', backendErr);
-      user = {
-        id: firebaseUser.uid,
-        email: firebaseUser.email || `${firebaseUser.uid}@daybit.app`,
-        phone_number: firebaseUser.phoneNumber || undefined,
-        created_at: new Date().toISOString(),
-      };
-      api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
-    }
-
-    if (user) {
-      api.setUser(user);
-      onSuccess(user);
+      const user = res.user || await api.getMe();
+      if (user) {
+        api.setUser(user);
+        onSuccess(user);
+      }
+    } catch (backendErr: any) {
+      console.error('Failed to sync Firebase session with MongoDB backend:', backendErr);
+      setError(backendErr.message || 'Failed to authenticate with backend database. Please try again.');
     }
   };
 

@@ -19,8 +19,13 @@ export class ApiClient {
   private refreshToken: string | null = null;
 
   constructor() {
-    this.accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-    this.refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+    const rawToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+    if (rawToken && (rawToken.startsWith('fb_') || rawToken.split('.').length !== 3)) {
+      this.clearTokens();
+    } else {
+      this.accessToken = rawToken;
+      this.refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
+    }
   }
 
   public isDesktopApp(): boolean {
@@ -68,11 +73,15 @@ export class ApiClient {
   }
 
   public getToken(): string | null {
+    if (this.accessToken && (this.accessToken.startsWith('fb_') || this.accessToken.split('.').length !== 3)) {
+      this.clearTokens();
+      return null;
+    }
     return this.accessToken;
   }
 
   public getAccessToken(): string | null {
-    return this.accessToken;
+    return this.getToken();
   }
 
   public getUser(): User | null {

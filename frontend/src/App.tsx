@@ -159,16 +159,13 @@ export function App() {
         if (redirectRes?.user) {
           const idToken = await redirectRes.user.getIdToken();
           try {
-            await api.signInWithFirebase(idToken);
-          } catch {
-            const fallbackUser: User = {
-              id: redirectRes.user.uid,
-              email: redirectRes.user.email || `${redirectRes.user.uid}@daybit.app`,
-              phone_number: redirectRes.user.phoneNumber || undefined,
-              created_at: new Date().toISOString(),
-            };
-            api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
-            localStorage.setItem('daybit_user', JSON.stringify(fallbackUser));
+            const res = await api.signInWithFirebase(idToken);
+            api.setTokens(res);
+            if (res.user) {
+              api.setUser(res.user);
+            }
+          } catch (e) {
+            console.warn('Redirect sync error:', e);
           }
         }
       } catch (redirectErr) {

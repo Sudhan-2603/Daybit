@@ -27,8 +27,30 @@ impl Db {
         tracing::info!("Parsing MongoDB connection settings");
         let client = Client::with_uri_str(database_url).await
             .map_err(|e| AppError::Internal(format!("MongoDB connection failed: {e}")))?;
-        let database = client.default_database()
-            .ok_or_else(|| AppError::Internal("MongoDB URI must include a database name".to_string()))?;
+        
+        let default_db_name = client.default_database()
+            .map(|db| db.name().to_string())
+            .unwrap_or_else(|| "Daybit".to_string());
+
+        let target_db_name = match client.list_database_names(None, None).await {
+            Ok(names) => {
+                if let Some(existing) = names.into_iter().find(|n| n.eq_ignore_ascii_case(&default_db_name)) {
+                    existing
+                } else {
+                    default_db_name
+                }
+            }
+            Err(_) => {
+                if default_db_name == "daybit" {
+                    "Daybit".to_string()
+                } else {
+                    default_db_name
+                }
+            }
+        };
+
+        tracing::info!("Using MongoDB database: {}", target_db_name);
+        let database = client.database(&target_db_name);
         let collection = database.collection::<mongodb::bson::Document>("daybit_state");
         tracing::info!("Checking MongoDB connectivity and loading Daybit data");
         let data = match collection.find_one(doc! { "_id": "daybit" }, None).await
