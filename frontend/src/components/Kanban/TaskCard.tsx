@@ -111,31 +111,31 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       {...attributes}
       {...listeners}
       onClick={() => onEdit(task)}
-      className={`relative group backdrop-blur-xl bg-white/80 dark:bg-zinc-950/70 rounded-2xl p-4 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs hover:shadow-md transition-all duration-200 ease-linear cursor-pointer active:cursor-grabbing select-none animate-card-enter ${
+      className={`relative group backdrop-blur-xl bg-white/80 dark:bg-zinc-950/70 rounded-2xl p-2.5 sm:p-4 border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs hover:shadow-md transition-all duration-200 ease-linear cursor-pointer active:cursor-grabbing select-none animate-card-enter ${
         isDragging ? 'opacity-30 ring-2 ring-black dark:ring-white ring-offset-2' : ''
       }`}
     >
       {/* Top Header: Tags + Three Dots Menu */}
-      <div className="flex items-start justify-between gap-2 mb-2">
-        <div className="flex flex-wrap items-center gap-1.5 flex-1">
+      <div className="flex items-start justify-between gap-1.5 mb-1.5 sm:mb-2">
+        <div className="flex flex-wrap items-center gap-1 flex-1 min-w-0">
           {tags.length > 0 ? (
-            tags.map((tag, idx) => (
+            tags.slice(0, 2).map((tag, idx) => (
               <span
                 key={idx}
-                className={`text-[10px] font-semibold px-2.5 py-0.5 rounded-full border ${getTagColorClass(tag)}`}
+                className={`text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2.5 py-0.5 rounded-full border truncate max-w-[80px] sm:max-w-none ${getTagColorClass(tag)}`}
               >
                 {tag}
               </span>
             ))
           ) : (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+            <span className="text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
               {task.place}
             </span>
           )}
         </div>
 
         {/* Notification and options */}
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-0.5 sm:gap-1">
           <button
             type="button"
             aria-label={`Enable notifications for ${task.name}`}
@@ -240,7 +240,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
       </div>
 
       {/* Task Name / Title */}
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-1.5 sm:gap-2">
         <button
           type="button"
           aria-label={`Mark ${task.name} ${task.status === 'Complete' ? 'incomplete' : 'complete'}`}
@@ -252,39 +252,39 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           onPointerDown={(event) => event.stopPropagation()}
           onMouseDown={(event) => event.stopPropagation()}
           onTouchStart={(event) => event.stopPropagation()}
-          className={`mt-0.5 h-4 w-4 shrink-0 rounded border flex items-center justify-center transition-all duration-75 cursor-pointer ${
+          className={`mt-0.5 h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 rounded border flex items-center justify-center transition-all duration-75 cursor-pointer ${
             task.status === 'Complete'
               ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white'
               : 'border-zinc-300 dark:border-zinc-600 bg-transparent hover:border-black dark:hover:border-white'
           }`}
         >
           {task.status === 'Complete' && (
-            <Check className="w-3 h-3 stroke-[3]" />
+            <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-[3]" />
           )}
         </button>
-        <h3 className="text-[13.5px] font-bold text-black dark:text-white leading-snug line-clamp-2">
+        <h3 className="text-xs sm:text-[13.5px] font-bold text-black dark:text-white leading-snug line-clamp-2">
           {task.name}
         </h3>
       </div>
 
       {/* Description */}
-      <p className="text-[11.5px] text-zinc-500 dark:text-zinc-400 line-clamp-2 mt-1 min-h-[30px] leading-relaxed">
+      <p className="text-[10px] sm:text-[11.5px] text-zinc-500 dark:text-zinc-400 line-clamp-1 sm:line-clamp-2 mt-0.5 sm:mt-1 min-h-[16px] sm:min-h-[30px] leading-relaxed">
         {task.description || 'No description provided.'}
       </p>
 
       {/* Segmented Progress Bar */}
-      <div className="mt-3 mb-2.5">
-        <div className="flex items-center justify-between text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1.5">
+      <div className="mt-2 sm:mt-3 mb-2 sm:mb-2.5">
+        <div className="flex items-center justify-between text-[9.5px] sm:text-[11px] font-medium text-zinc-500 dark:text-zinc-400 mb-1">
           <span>Progress</span>
           <span className="font-semibold text-black dark:text-white">
             {task.progress_done}/{task.progress_total}
           </span>
         </div>
-        <div className="flex items-center gap-1.5 w-full">
+        <div className="flex items-center gap-1 sm:gap-1.5 w-full">
           {Array.from({ length: totalSegments }).map((_, idx) => (
             <div
               key={idx}
-              className={`h-1.5 rounded-full flex-1 transition-all duration-200 ease-linear ${
+              className={`h-1 sm:h-1.5 rounded-full flex-1 transition-all duration-200 ease-linear ${
                 idx < doneSegments
                   ? getProgressColor(task.status)
                   : 'bg-zinc-100 dark:bg-zinc-800'
@@ -294,12 +294,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         </div>
       </div>
 
-      {/* Bottom Footer: Place Badge (Removed flex items-center gap-2.5 text-zinc count as requested) */}
-      <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
-        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300">
+      {/* Bottom Footer: Place Badge */}
+      <div className="flex items-center justify-between pt-1.5 sm:pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
+        <span className="text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300">
           {task.place}
         </span>
-        <span className="text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
+        <span className="hidden sm:inline text-[10px] font-medium text-zinc-400 dark:text-zinc-500">
           Click for details
         </span>
       </div>

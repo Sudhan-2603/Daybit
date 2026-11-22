@@ -105,21 +105,23 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
         </button>
       </div>
 
-      {/* Task List / Droppable Container */}
-      <div className="flex-1 flex flex-col gap-3 min-h-[350px]">
+      {/* Task List / Droppable Container: 2-column left & right layout on mobile, vertical stack on sm+ */}
+      <div className="flex-1 min-h-[160px] sm:min-h-[350px]">
         <SortableContext items={tasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
-          {tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onEdit={onEditTask}
-              onDelete={onDeleteTask}
-              onInvite={onInviteTask}
-              onTriggerReminder={onTriggerReminder}
-              onToggleComplete={onToggleComplete}
-              onRequestNotification={onRequestNotification}
-            />
-          ))}
+          <div className="grid grid-cols-2 sm:grid-cols-1 gap-2 sm:gap-3">
+            {tasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onEdit={onEditTask}
+                onDelete={onDeleteTask}
+                onInvite={onInviteTask}
+                onTriggerReminder={onTriggerReminder}
+                onToggleComplete={onToggleComplete}
+                onRequestNotification={onRequestNotification}
+              />
+            ))}
+          </div>
         </SortableContext>
 
         {tasks.length === 0 && (

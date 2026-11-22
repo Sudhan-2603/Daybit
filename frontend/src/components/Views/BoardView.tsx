@@ -22,8 +22,8 @@ export const BoardView: React.FC<BoardViewProps> = ({
   onRequestNotification,
 }) => {
   return (
-    <div className="max-w-[1600px] mx-auto px-6 py-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="max-w-[1600px] mx-auto px-3 sm:px-6 py-4 sm:py-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
         {tasks.map((task) => (
           <TaskCard
             key={task.id}

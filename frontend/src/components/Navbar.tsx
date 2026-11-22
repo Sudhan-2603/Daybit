@@ -54,19 +54,17 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-xl bg-white/75 dark:bg-black/75 border-b border-zinc-200/60 dark:border-zinc-800/60 transition-colors duration-200">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-4">
-        {/* Brand: "Daybit" */}
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-center sm:justify-between gap-4">
+        {/* Brand: In mobile view, show only the logo */}
         <div className="flex items-center gap-2.5">
           <img src={daybitLogo} alt="Daybit" className="w-8 h-8 rounded-full bg-black object-contain shadow-xs" />
-          <div>
-            <h1 className="text-base sm:text-lg font-bold tracking-tight text-black dark:text-white leading-tight font-sans">
-              Daybit
-            </h1>
-          </div>
+          <h1 className="hidden sm:inline-block text-base sm:text-lg font-bold tracking-tight text-black dark:text-white leading-tight font-sans">
+            Daybit
+          </h1>
         </div>
 
-        {/* Right Action Capsules */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Right Action Capsules - Hidden on mobile so header shows only the logo */}
+        <div className="hidden sm:flex items-center gap-1.5 sm:gap-2">
           {/* Small Sized Search Bar (Placed before theme button) */}
           <div className="relative flex items-center gap-1.5 rounded-full border border-zinc-200/90 dark:border-zinc-800 bg-zinc-100/80 dark:bg-zinc-900/80 px-2.5 py-1 text-xs">
             <Search className="w-3 h-3 text-zinc-400 shrink-0" />

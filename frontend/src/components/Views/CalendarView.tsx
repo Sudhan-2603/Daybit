@@ -124,30 +124,30 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
         </div>
       </div>
 
-      {/* Frosted Glass Calendar Grid */}
-      <div className="backdrop-blur-xl bg-white/70 dark:bg-zinc-950/50 rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs overflow-x-auto">
-        <div className="min-w-[760px] overflow-hidden rounded-3xl">
-        {/* Days of Week Header */}
+      {/* Auto-layout Frosted Glass Calendar Grid */}
+      <div className="w-full backdrop-blur-xl bg-white/70 dark:bg-zinc-950/50 rounded-2xl sm:rounded-3xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-xs overflow-hidden">
+        {/* Days of Week Header - Auto-layout */}
         <div className="grid grid-cols-7 border-b border-zinc-200/60 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/40">
           {daysOfWeek.map((day) => (
             <div
               key={day}
-              className="py-3 text-center text-xs font-bold text-zinc-400 uppercase tracking-wider"
+              className="py-2 sm:py-3 text-center text-[10px] sm:text-xs font-bold text-zinc-400 uppercase tracking-wider"
             >
-              {day}
+              <span className="sm:hidden">{day.slice(0, 1)}</span>
+              <span className="hidden sm:inline">{day}</span>
             </div>
           ))}
         </div>
 
-        {/* Calendar Cells */}
-        <div className="grid grid-cols-7 auto-rows-[115px] divide-x divide-y divide-zinc-200/50 dark:divide-zinc-800/50">
+        {/* Calendar Cells - Fluid Auto Rows for small screens */}
+        <div className="grid grid-cols-7 auto-rows-[minmax(56px,auto)] sm:auto-rows-[115px] divide-x divide-y divide-zinc-200/50 dark:divide-zinc-800/50">
           {/* Previous Month */}
           {Array.from({ length: firstDay }).map((_, idx) => {
             const dayNum = daysInPrevMonth - firstDay + idx + 1;
             return (
               <div
                 key={`prev-${idx}`}
-                className="p-2 bg-zinc-50/20 dark:bg-zinc-950/20 text-zinc-300 dark:text-zinc-700 text-xs font-medium"
+                className="p-1 sm:p-2 bg-zinc-50/20 dark:bg-zinc-950/20 text-zinc-300 dark:text-zinc-700 text-[10px] sm:text-xs font-medium"
               >
                 {dayNum}
               </div>
@@ -164,35 +164,62 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
             return (
               <div
                 key={`current-${dayNum}`}
-                className={`p-2 transition-colors duration-150 ease-linear group relative flex flex-col justify-between ${
+                onClick={() => {
+                  if (dayTasks.length > 0) {
+                    onSelectTask(dayTasks[0]);
+                  } else {
+                    onAddTask(dateKey);
+                  }
+                }}
+                className={`p-1 sm:p-2 transition-colors duration-150 ease-linear group relative flex flex-col justify-between cursor-pointer ${
                   isCurrent ? 'bg-zinc-100/50 dark:bg-zinc-900/40' : 'hover:bg-zinc-50/50 dark:hover:bg-zinc-900/20'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-0.5 sm:mb-1">
                   <span
-                    className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${
+                    className={`inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 rounded-full text-[10px] sm:text-xs font-bold ${
                       isCurrent
-                        ? 'bg-black text-white dark:bg-white dark:text-black'
+                        ? 'bg-black text-white dark:bg-white dark:text-black shadow-xs'
                         : 'text-zinc-700 dark:text-zinc-300'
                     }`}
                   >
                     {dayNum}
                   </span>
                   <button
-                    onClick={() => onAddTask(dateKey)}
-                    className="opacity-0 group-hover:opacity-100 p-1 text-zinc-400 hover:text-black dark:hover:text-white rounded transition-opacity duration-150"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAddTask(dateKey);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 sm:p-1 text-zinc-400 hover:text-black dark:hover:text-white rounded transition-opacity duration-150 hidden sm:block"
                     title="Add task"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
-                {/* Day Tasks List */}
-                <div className="flex-1 overflow-y-auto no-scrollbar space-y-1">
+                {/* Mobile View: Compact Status Indicator Dots */}
+                <div className="sm:hidden flex items-center justify-center gap-1 mt-1 flex-wrap min-h-[12px]">
+                  {dayTasks.slice(0, 3).map((t) => (
+                    <span
+                      key={t.id}
+                      className={`w-1.5 h-1.5 rounded-full ${getStatusDotColor(t.status)}`}
+                      title={t.name}
+                    />
+                  ))}
+                  {dayTasks.length > 3 && (
+                    <span className="text-[8px] font-bold text-zinc-400">+{dayTasks.length - 3}</span>
+                  )}
+                </div>
+
+                {/* Desktop View: Full Task Pill Cards */}
+                <div className="hidden sm:block flex-1 overflow-y-auto no-scrollbar space-y-1">
                   {dayTasks.map((t) => (
                     <div
                       key={t.id}
-                      onClick={() => onSelectTask(t)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectTask(t);
+                      }}
                       className="cursor-pointer px-2 py-1 rounded-xl text-[11px] font-medium bg-white/90 dark:bg-zinc-900/90 border border-zinc-200/80 dark:border-zinc-800 shadow-2xs hover:border-black dark:hover:border-white flex items-center gap-1.5 truncate transition-all duration-150 ease-linear"
                     >
                       <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${getStatusDotColor(t.status)}`} />
@@ -203,7 +230,6 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
               </div>
             );
           })}
-        </div>
         </div>
       </div>
     </div>
