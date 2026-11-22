@@ -16,18 +16,18 @@
   <img src="https://img.shields.io/badge/Rust-Axum%200.7-000000?style=for-the-badge&logo=rust&logoColor=white" alt="Rust Axum" />
   <img src="https://img.shields.io/badge/MongoDB-Atlas%20%2F%20Local-000000?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/Tauri%202-Win%20%7C%20Linux%20%7C%20Android-000000?style=for-the-badge&logo=tauri&logoColor=white" alt="Tauri 2" />
-  <a href="releases/v0.2/"><img src="https://img.shields.io/badge/Release-v0.2-000000?style=for-the-badge&logo=github&logoColor=white" alt="v0.2" /></a>
+  <a href="https://github.com/Sudhan-2603/Daybit/releases/latest"><img src="https://img.shields.io/badge/Latest%20Release-v0.2.0-000000?style=for-the-badge&logo=github&logoColor=white" alt="v0.2.0" /></a>
 </p>
 
 <p>
   <a href="#-why-daybit">About</a> •
+  <a href="#-latest-release-v020--all-platform-installers"><strong>Downloads</strong></a> •
   <a href="#-screenshots">Screenshots</a> •
   <a href="#-feature-highlights">Features</a> •
   <a href="#%EF%B8%8F-architecture">Architecture</a> •
-  <a href="releases/CROSS_PLATFORM_APPS.md"><strong>Cross-Platform Apps</strong></a> •
+  <a href="#-project-structure">Structure</a> •
   <a href="#-getting-started">Quick Start</a> •
-  <a href="#-api--websocket">API</a> •
-  <a href="#-multi-os-cross-platform-applications">Builds</a>
+  <a href="#-api--websocket">API</a>
 </p>
 
 </div>
@@ -280,57 +280,35 @@ The [`deploy-frontend.yml`](.github/workflows/deploy-frontend.yml) workflow buil
 
 ## 📂 Project Structure
 
-<details>
-<summary><strong>Click to view full workspace layout</strong></summary>
-
-<br />
+The codebase is organized into modular workspaces and platform directories:
 
 ```text
 Daybit/
-├── Cargo.toml                         # Cargo workspace (backend + src-tauri)
-├── .env.example                       # Environment variable template
-├── Daybit.bat                         # Opens the installed standalone desktop app
-├── backend/                           # Rust Axum API, scheduler & MongoDB store
-│   ├── Cargo.toml
-│   ├── migrations/20261110000000_init.sql
-│   └── src/
-│       ├── main.rs                    # Router, CORS & server entry
-│       ├── config.rs                  # Environment config loader
-│       ├── auth.rs                    # Argon2 & HS256 JWT helpers
-│       ├── db.rs                      # MongoDB persistence layer
-│       ├── scheduler.rs               # Tokio reminder cron worker
-│       └── routes/                    # auth, tasks, dashboard, ws, whatsapp
-├── frontend/                          # React + TypeScript + Tailwind app
-│   ├── index.html
-│   ├── package.json
-│   ├── public/daybit-logo.png
-│   └── src/
-│       ├── App.tsx                    # Workspace shell, themes, fonts & state
-│       ├── services/                  # api.ts, websocket.ts, audio.ts, i18n.ts
-│       └── components/                # Navbar, TabBar, Kanban, Views & Modals
-└── src-tauri/                         # Tauri 2 native wrapper (Win, Linux, Android)
-    ├── Cargo.toml
-    ├── tauri.conf.json
-    └── src/
+├── .github/              # CI/CD pipelines, GitHub Pages deployment & multi-platform build workflows
+├── backend/              # Rust Axum API, Tokio cron scheduler, WebSockets & MongoDB store
+├── frontend/             # React 19 + TypeScript + Tailwind UI workspace & PWA
+│   └── android/          # Native Android Gradle project (Capacitor Mobile APK)
+├── releases/             # Multi-platform release guides, installation scripts & checksums
+├── Screenshots/          # High-resolution application previews & theme showcases
+└── src-tauri/            # Tauri 2 native desktop shell configuration (Windows & Linux)
 ```
-
-</details>
 
 ---
 
-## 📦 Multi-OS Cross-Platform Applications
+## 🚀 Latest Releases & All-Platform Installers
 
-Daybit packages are available for **Windows**, **Ubuntu**, **Arch Linux**, and **Android Mobile (APK)**. Full documentation is available in **[releases/CROSS_PLATFORM_APPS.md](releases/CROSS_PLATFORM_APPS.md)**.
+Precompiled standalone installers and binary packages are generated for all supported desktop and mobile operating systems:
 
-| Platform | Format | Operating System Target | Command / Installation |
+| Platform | Installer Package | Format | Direct Download / Run Command |
 | :--- | :--- | :--- | :--- |
-| **Windows** | `.exe` / `.msi` | Windows 10 & 11 (x64) | Run `Daybit-Setup.exe` or `Daybit-Setup.msi` |
-| **Ubuntu / Debian** | `.deb` | Ubuntu 20.04+, Debian, Mint | `sudo dpkg -i daybit_0.2.0_amd64.deb` |
-| **Arch Linux** | `.AppImage` | Arch Linux, Manjaro, EndeavourOS, Fedora | `chmod +x Daybit-0.2.0.AppImage && ./Daybit-0.2.0.AppImage` |
-| **Mobile Android** | `.apk` | Android 7.0 - 14+ | Tap `Daybit-v0.2.0.apk` on your phone to install |
+| **🪟 Windows (Installer)** | `Daybit-Setup-v0.2.0.exe` | NSIS Executable | [Download for Windows](https://github.com/Sudhan-2603/Daybit/releases/latest) |
+| **🪟 Windows (Enterprise)** | `Daybit-v0.2.0-x64.msi` | Windows MSI Installer | [Download MSI Installer](https://github.com/Sudhan-2603/Daybit/releases/latest) |
+| **🐧 Ubuntu / Debian** | `daybit_0.2.0_amd64.deb` | Native Debian Package | `sudo dpkg -i daybit_0.2.0_amd64.deb` |
+| **🐧 Arch Linux / Universal** | `Daybit-0.2.0.AppImage` | Standalone AppImage | `chmod +x Daybit-0.2.0.AppImage && ./Daybit-0.2.0.AppImage` |
+| **📱 Mobile Android** | `Daybit-v0.2.0.apk` | Android APK Package | [Download Android APK](https://github.com/Sudhan-2603/Daybit/releases/latest) |
 
-### Automated Cloud Builds via GitHub Actions
-Every release is automatically compiled across Windows, Ubuntu, Arch Linux, and Android runners via [`.github/workflows/build-all-platforms.yml`](.github/workflows/build-all-platforms.yml). Download the latest builds directly from the **[Actions Tab Artifacts](https://github.com/Sudhan-2603/Daybit/actions)**.
+> [!TIP]
+> **Automated Cloud Builds:** All platform installers are compiled directly from source across Windows, Ubuntu, Arch Linux, and Android runners using [`.github/workflows/build-all-platforms.yml`](.github/workflows/build-all-platforms.yml). You can download raw build artifacts directly from the **[GitHub Actions Artifacts Tab](https://github.com/Sudhan-2603/Daybit/actions)** or the official **[GitHub Releases Page](https://github.com/Sudhan-2603/Daybit/releases)**. Detailed documentation for each operating system is available in **[releases/CROSS_PLATFORM_APPS.md](releases/CROSS_PLATFORM_APPS.md)**.
 
 ---
 
