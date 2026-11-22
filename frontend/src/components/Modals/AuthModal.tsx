@@ -63,15 +63,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     setLoading(true);
 
     try {
+      let tokens;
       if (isRegister) {
-        const tokens = await api.register(email.trim(), password);
-        api.setTokens(tokens.access_token, tokens.refresh_token);
+        tokens = await api.register(email.trim(), password);
       } else {
-        const tokens = await api.login(email.trim(), password);
-        api.setTokens(tokens.access_token, tokens.refresh_token);
+        tokens = await api.login(email.trim(), password);
+      }
+      api.setTokens(tokens);
+
+      let user = tokens.user || null;
+      if (!user) {
+        try {
+          user = await api.getMe();
+        } catch {
+          user = {
+            id: 'user_' + Date.now().toString(36),
+            email: email.trim(),
+            created_at: new Date().toISOString(),
+          };
+        }
       }
 
-      const user = await api.getMe();
+      api.setUser(user);
       onSuccess(user);
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please verify credentials.');
@@ -84,8 +97,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
     const idToken = await firebaseUser.getIdToken();
     let user: User | null = null;
     try {
-      await api.signInWithFirebase(idToken);
-      user = await api.getMe();
+      const res = await api.signInWithFirebase(idToken);
+      api.setTokens(res);
+      user = res.user || await api.getMe();
     } catch (backendErr) {
       console.warn('Backend sync deferred, establishing Firebase session profile:', backendErr);
       user = {
@@ -95,10 +109,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         created_at: new Date().toISOString(),
       };
       api.setTokens('fb_' + idToken.slice(0, 32), 'fb_refresh');
-      localStorage.setItem('daybit_user', JSON.stringify(user));
     }
 
     if (user) {
+      api.setUser(user);
       onSuccess(user);
     }
   };

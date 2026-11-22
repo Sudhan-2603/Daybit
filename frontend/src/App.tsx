@@ -176,8 +176,8 @@ export function App() {
       }
 
       const token = api.getToken();
-      const stored = api.getUser();
-      if (!token || !stored) {
+      let currentUser = api.getUser();
+      if (!token) {
         api.clearTokens();
         setUser(null);
         setTasks([]);
@@ -186,18 +186,26 @@ export function App() {
         return;
       }
 
-      let currentUser: User | null = null;
       try {
-        currentUser = await api.getMe();
-      } catch {
-        api.clearTokens();
-        setUser(null);
-        setTasks([]);
-        setStats(null);
-        setAuthModalOpen(true);
-        return;
+        const fetchedUser = await api.getMe();
+        if (fetchedUser) {
+          currentUser = fetchedUser;
+          api.setUser(fetchedUser);
+        }
+      } catch (meErr) {
+        console.warn('api.getMe background sync deferred:', meErr);
+        if (!currentUser) {
+          api.clearTokens();
+          setUser(null);
+          setTasks([]);
+          setStats(null);
+          setAuthModalOpen(true);
+          return;
+        }
       }
+
       setUser(currentUser);
+      setAuthModalOpen(false);
 
       try {
         const [fetchedTasks, fetchedStats] = await Promise.all([
@@ -666,8 +674,11 @@ export function App() {
         }}
         onSuccess={(u) => {
           setUser(u);
+          api.setUser(u);
           setAuthModalOpen(false);
-          initialize();
+          api.getTasks().then((t) => setTasks(mergeTasksById(t))).catch(console.warn);
+          api.getDashboardStats().then(setStats).catch(console.warn);
+          setupWebSocket();
         }}
       />
 

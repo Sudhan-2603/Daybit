@@ -80,15 +80,17 @@ export class ApiClient {
     if (!raw) return null;
     try {
       const u = JSON.parse(raw);
-      if (!u || u.id === 'offline_user' || u.email?.includes('offline') || !this.accessToken) {
-        this.clearTokens();
+      if (!u || u.id === 'offline_user' || u.email?.includes('offline')) {
         return null;
       }
       return u;
     } catch {
-      this.clearTokens();
       return null;
     }
+  }
+
+  public setUser(user: User) {
+    localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
   }
 
   async checkEmail(email: string): Promise<{ exists: boolean }> {
